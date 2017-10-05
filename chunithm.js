@@ -513,9 +513,7 @@ function push_playlog_to_recent_candidates (playlog) {
 /* ---- SCRAPING */
 
 function scrape_playlog_page () {
-    if (!location.href.match(/Playlog\.html/)) throw Error();
-
-    return $(".frame02.w400").map(function () {
+    var logs =  $(".frame02.w400").map(function () {
         var date = $(this).find(".play_datalist_date").html();
         var level = $(this).find(".play_track_result img").attr("src").match("text_(.*)\.png")[1];
         var name = $(this).find(".play_musicdata_title").html();
@@ -524,21 +522,29 @@ function scrape_playlog_page () {
             return playlog(name, LEVEL_ID[level], parse_int(score), date);
         }
     });
+
+    /* push older logs first */
+    for (var i = logs.length - 1; i >= 0; i--) {
+        push_playlog_to_best_scores(logs[i]);
+        push_playlog_to_recent_candidates(logs[i]);
+    }
 }
 
 function scrape_musicgenre_page () {
-    if (!location.href.match(/MusicGenre\.html/)) throw Error();
-
     var level_id = LEVEL_ID[$(".box01_title span").html().toLowerCase()];
     if (level_id == undefined) return [];
 
-    return $(".w388.musiclist_box").map(function () {
+    var logs = $(".w388.musiclist_box").map(function () {
         var name = $(this).find(".music_title").html();
         var score = $(this).find(".play_musicdata_highscore span").html();
         if (name && score) {
             return playlog(name, level_id, parse_int(score));
         }
     });
+
+    for (var i = 0; i < logs.length; i++) {
+        push_playlog_to_best_scores(logs[i]);
+    }
 }
 
 /* ---- VIEW */
