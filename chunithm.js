@@ -538,6 +538,14 @@ function push_playlog_to_recent_candidates (playlog) {
     }
 }
 
+function compute_rate () {
+    var best_list   = Object.values(this.data.best_scores).sort(comp_rate).slice(0, 30);
+    var recent_list = this.data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
+    var best   = best_list.map(function (x) { return x.rate; }).average();
+    var recent = recent_list.map(function (x) { return x.rate; }).average();
+    return { best: best, recent: recent, total: (best * 3 + recent) / 4 };
+}
+
 /* ---- SCRAPING */
 
 function scrape_playlog_page () {
@@ -575,6 +583,28 @@ function scrape_musicgenre_page () {
     }
 }
 
+function run_scraper () {
+    if (location.href.match(/Playlog\.html/))
+        scrape_playlog_page();
+    else if (location.href.match(/MusicGenre\.html/))
+        scrape_musicgenre_page();
+    else {
+        alert("PlayLog か MusicGenre を開いてください");
+        throw Error();
+    }
+}
+
+/* ---- localStorage */
+
+function load_data () {
+    var data_str = localStorage.getItem("cra_star_data");
+    if (data_str) Object.assign(this.data, JSON.parse(data_str));
+}
+
+function save_data () {
+    localStorage.setItem("cra_star_data", JSON.stringify(this.data));
+}
+
 /* ---- VIEW MODEL */
 
 var vm;
@@ -594,11 +624,7 @@ function attach_view (el) {
         },
         computed: {
             rate: function () {
-                var best_list   = Object.values(this.data.best_scores).sort(comp_rate).slice(0, 30);
-                var recent_list = this.data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
-                var best   = best_list.map(function (x) { return x.rate; }).average();
-                var recent = recent_list.map(function (x) { return x.rate; }).average();
-                return { best: best, recent: recent, total: (best * 3 + recent) / 4 };
+                return compute_rate();
             },
             ordered_best_list: function () {
                 return Object.values(this.data.best_scores).sort(this.best_list_order);
@@ -608,24 +634,8 @@ function attach_view (el) {
             }
         },
         methods: {
-            load_data: function () {
-                var data_str = localStorage.getItem("cra_star_data");
-                if (data_str) Object.assign(this.data, JSON.parse(data_str));
-            },
-            save_data: function () {
-                localStorage.setItem("cra_star_data", JSON.stringify(this.data));
-            },
-            run_scraper: function () {
-                if (location.href.match(/Playlog\.html/))
-                    scrape_playlog_page();
-                else if (location.href.match(/MusicGenre\.html/))
-                    scrape_musicgenre_page();
-                else {
-                    alert("PlayLog か MusicGenre を開いてください");
-                    throw Error();
-                }
-                this.save_data();
-            }
+            load_data: function () { load_data(); },
+            run_scraper: function () { run_scraper(); save_data(); }
         }
     });
 }
