@@ -449,16 +449,10 @@ var data = {
     last_play_date: undefined,
 };
 
-var last_data = JSON.parse(localStorage.getItem("crastar_data")) || {
-    best_scores:       {},
-    recent_candidates: [],
-    last_play_date: undefined
-};
-
 function playlog (name, level, score, play_date /* optional */) {
     var chart      = CHART_BY_NAME[name];
     var difficulty = (chart && chart.difficulty[level]) || 0;
-    var last_score = last_data.best_scores[name] || {};
+    var last_score = data.best_scores[name] || {};
     var rate = score_to_rate(difficulty, score);
     return {
         name:       name,
@@ -484,7 +478,7 @@ function push_playlog_to_best_scores (playlog) {
 /* reference: http://max-eipi.hatenablog.com/entry/2016/08/22/031357 */
 function push_playlog_to_recent_candidates (playlog) {
     var length              = data.recent_candidates.length;
-    var recent_list         = data.recent_candidates.copy.sort(comp_rate).slice(0, 10);
+    var recent_list         = data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
     var rate_is_less        = function (x) { return x.rate < playlog.rate; };
     var score_is_less_or_eq = function (x) { return x.score <= playlog.score; };
 
