@@ -441,6 +441,18 @@ Array.prototype.copy = function () {
     return [].concat(this);
 }
 
+/* Compute average of an number array. */
+Array.prototype.average = function () {
+    var sum = 0;
+    for (var i = 0; i < this.length; i++) sum += this[i];
+    return sum / (this.length || 1);
+}
+
+/* Polyfill Object.values. */
+Object.values = function (o) {
+    return Object.keys(o).map(function (key) { return o[key]; });
+}
+
 /* ---- LOGIC */
 
 var data = {
@@ -471,7 +483,9 @@ function playlog (name, level, score, play_date /* optional */) {
 function push_playlog_to_best_scores (playlog) {
     var current_best = data.best_scores[playlog.name];
     if (!current_best || comp_rate(playlog, current_best) < 0) {
-        data.best_scores[playlog.name] = playlog;
+        /* workaround vue.js's limitation */
+        if (Vue) Vue.set(data.best_scores, playlog.name, playlog);
+        else data.best_scores[playlog.name] = playlog;
     }
 }
 
@@ -545,6 +559,61 @@ function scrape_musicgenre_page () {
     for (var i = 0; i < logs.length; i++) {
         push_playlog_to_best_scores(logs[i]);
     }
+}
+
+/* ---- VIEW MODEL */
+
+var vm;
+
+function attach_view (el) {
+    vm = new Vue({
+        el: el,
+        data: {
+            data:                    data,
+            best_list_order:         comp_rate,
+            recent_candidates_order: comp_rate,
+            last_rate:               { best: 0, recent: 0, total: 0 },
+        },
+        created: function () {
+            this.load_data();
+            this.last_rate = this.rate;
+        },
+        computed: {
+            rate: function () {
+                var best_list   = Object.values(this.data.best_scores).sort(comp_rate).slice(0, 30);
+                var recent_list = this.data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
+                var best   = best_list.map(function (x) { return x.rate; }).average();
+                var recent = recent_list.map(function (x) { return x.rate; }).average();
+                return { best: best, recent: recent, total: (best * 3 + recent) / 4 };
+            },
+            ordered_best_list: function () {
+                return Object.values(this.data.best_scores).sort(this.best_list_order);
+            },
+            ordered_recent_candidates: function () {
+                return this.data.recent_candidates.copy().sort(this.recent_candidates_order);
+            }
+        },
+        methods: {
+            load_data: function () {
+                var data_str = localStorage.getItem("cra_star_data");
+                if (data_str) Object.assign(this.data, JSON.parse(data_str));
+            },
+            save_data: function () {
+                localStorage.setItem("cra_star_data", JSON.stringify(this.data));
+            },
+            run_scraper: function () {
+                if (location.href.match(/Playlog\.html/))
+                    scrape_playlog_page();
+                else if (location.href.match(/MusicGenre\.html/))
+                    scrape_musicgenre_page();
+                else {
+                    alert("PlayLog か MusicGenre を開いてください");
+                    throw Error();
+                }
+                this.save_data();
+            }
+        }
+    });
 }
 
 /* ---- VIEW */
