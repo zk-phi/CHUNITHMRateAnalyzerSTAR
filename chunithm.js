@@ -436,6 +436,20 @@ function parse_int (str) {
     return parseInt(str.split(",").join(""));
 }
 
+/* Load scripts listed in SCRIPTS in sequence, and call ONLOAD if all
+scripts are loaded. */
+function load_scripts_in_sequence (scripts, onload, loading) {
+    var script = scripts.shift();
+    if (script) {
+        if (loading) loading(script);
+        $.getScript(script, function (){
+            load_scripts_in_sequence(scripts, onload, loading);
+        });
+    } else if (onload) {
+        onload();
+    }
+}
+
 /* Shallow copy an array. */
 Array.prototype.copy = function () {
     return [].concat(this);
@@ -617,3 +631,27 @@ function attach_view (el) {
 }
 
 /* ---- VIEW */
+
+var view = `
+<div id="app" style="position: absolute; top: 0px; left: 0px; min-height: 100%; width: 100%; z-index: 100; background-color: white; opacity: 0.9;">
+  <p>
+    <button @click="run_scraper">Scrape!</button>
+  <p>
+  <p>
+    best_rate: {{ rate.best }}({{ rate.best - last_rate.best }}),
+    recent_rate: {{ rate.recent }}({{ rate.recent - last_rate.recent }})
+  <p>
+  <ul>
+    <li v-for="playlog in ordered_best_list">
+      {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }})
+    </li>
+  </ul>
+</div>
+`
+
+load_scripts_in_sequence(DEPENDENCIES, function () {
+    $(view).appendTo("body");
+    attach_view("#app");
+}, function (s) {
+    console.log("Loading: " + s + "...");
+});
