@@ -663,6 +663,18 @@ function attach_view (el) {
         },
         methods: {
             run_scraper: function () { run_scraper(); save_data(); }
+        },
+        filters: {
+            rate_str: function (num) {
+                return num.toString().substring(0, num >= 10 ? 5 : 4);
+            },
+            rate_diff_str: function (num) {
+                return num <= -10.0 ? "[" + num.toString().substring(0, 6) + "]"
+                    :  num <= -0.01 ? "[" + num.toString().substring(0, 5) + "]"
+                    :  num >=  10.0 ? "[+" + num.toString().substring(0, 5) + "]"
+                    :  num >=  0.01 ? "[+" + num.toString().substring(0, 4) + "]"
+                    :  "";
+            }
         }
     });
 }
@@ -675,9 +687,9 @@ var view = `
     <button @click="run_scraper">Scrape!</button>
   <p>
   <p>
-    best_rate: {{ rate.best }}({{ rate.best - last_rate.best }}),
-    recent_rate: {{ rate.recent }}({{ rate.recent - last_rate.recent }})
-    到達可能: {{ rate.opt }}({{ rate.opt - last_rate.opt }})
+    best_rate: {{ rate.best | rate_str }}{{ rate.best - last_rate.best | rate_diff_str }},
+    recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }},
+    到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}
   <p>
   <ul>
     <li v-for="playlog in ordered_best_list">
