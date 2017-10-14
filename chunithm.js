@@ -611,17 +611,6 @@ function scrape_musicgenre_page () {
     }
 }
 
-function run_scraper () {
-    if (location.href.match(/Playlog\.html/))
-        scrape_playlog_page();
-    else if (location.href.match(/MusicGenre\.html/))
-        scrape_musicgenre_page();
-    else {
-        alert("PlayLog か MusicGenre を開いてください");
-        throw Error();
-    }
-}
-
 /* ---- localStorage */
 
 function load_data () {
@@ -644,11 +633,16 @@ function attach_view (el) {
             data:                    data,
             best_list_order:         comp_rate,
             recent_candidates_order: comp_rate,
+            scraper:                 null,
             last_rate:               { best: 0, recent: 0, total: 0, opt: 0 },
         },
         created: function () {
             load_data();
             this.last_rate = this.rate;
+            if (location.href.match(/Playlog\.html/))
+                this.scraper = scrape_playlog_page;
+            else if (location.href.match(/MusicGenre\.html/))
+                this.scraper = scrape_musicgenre_page;
         },
         computed: {
             rate: function () {
@@ -662,7 +656,14 @@ function attach_view (el) {
             }
         },
         methods: {
-            run_scraper: function () { run_scraper(); save_data(); }
+            scrape: function () {
+                this.scraper();
+                this.scraper = null;
+                save_data();
+            },
+            skip_scraping: function () {
+                this.scraper = null;
+            }
         },
         filters: {
             rate_str: function (num) {
@@ -683,8 +684,8 @@ function attach_view (el) {
 
 var view = `
 <div id="app" style="position: absolute; top: 0px; left: 0px; min-height: 100%; width: 100%; z-index: 100; background-color: white; opacity: 0.9;">
-  <p>
-    <button @click="run_scraper">Scrape!</button>
+  <p v-if="scraper">
+    <button @click="scrape">Scrape!</button>
   <p>
   <p>
     best_rate: {{ rate.best | rate_str }}{{ rate.best - last_rate.best | rate_diff_str }},
