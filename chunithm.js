@@ -647,7 +647,7 @@ function attach_view (el) {
             last_rate:               { best: 0, recent: 0, total: 0, opt: 0 },
         },
         created: function () {
-            this.load_data();
+            load_data();
             this.last_rate = this.rate;
         },
         computed: {
@@ -662,7 +662,6 @@ function attach_view (el) {
             }
         },
         methods: {
-            load_data: function () { load_data(); },
             run_scraper: function () { run_scraper(); save_data(); }
         }
     });
