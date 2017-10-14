@@ -543,7 +543,14 @@ function compute_rate () {
     var recent_list = this.data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
     var best   = best_list.map(function (x) { return x.rate; }).average();
     var recent = recent_list.map(function (x) { return x.rate; }).average();
-    return { best: best, recent: recent, total: (best * 3 + recent) / 4 };
+    var opt_recent = best_list.length ? best_list[0].rate : 0;
+
+    return {
+        best:   best,
+        recent: recent,
+        opt:    (best * 3 + opt_recent) / 4,
+        total:  (best * 3 + recent) / 4
+    };
 }
 
 /* ---- SCRAPING */
@@ -637,7 +644,7 @@ function attach_view (el) {
             data:                    data,
             best_list_order:         comp_rate,
             recent_candidates_order: comp_rate,
-            last_rate:               { best: 0, recent: 0, total: 0 },
+            last_rate:               { best: 0, recent: 0, total: 0, opt: 0 },
         },
         created: function () {
             this.load_data();
@@ -671,6 +678,7 @@ var view = `
   <p>
     best_rate: {{ rate.best }}({{ rate.best - last_rate.best }}),
     recent_rate: {{ rate.recent }}({{ rate.recent - last_rate.recent }})
+    到達可能: {{ rate.opt }}({{ rate.opt - last_rate.opt }})
   <p>
   <ul>
     <li v-for="playlog in ordered_best_list">
