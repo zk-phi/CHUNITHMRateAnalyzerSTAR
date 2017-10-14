@@ -559,6 +559,11 @@ function scrape_playlog_page () {
         }
     });
 
+    if (!logs.length) {
+        alert("プレー履歴を取得できませんでした");
+        throw Error();
+    }
+
     /* push older logs first */
     for (var i = logs.length - 1; i >= 0; i--) {
         push_playlog_to_best_scores(logs[i]);
@@ -567,8 +572,19 @@ function scrape_playlog_page () {
 }
 
 function scrape_musicgenre_page () {
-    var level_id = LEVEL_ID[$(".box01_title span").html().toLowerCase()];
-    if (level_id == undefined) return [];
+    var level_name = $(".box01_title span").html();
+
+    if (!level_name) {
+        alert("難易度が選択されていません");
+        throw Error();
+    }
+
+    var level_id = LEVEL_ID[level_name.toLowerCase()];
+
+    if (level_id == undefined) {
+        alert("難易度を取得できませんでした");
+        throw Error();
+    }
 
     var logs = $(".w388.musiclist_box").map(function () {
         var name = $(this).find(".music_title").html();
@@ -577,6 +593,11 @@ function scrape_musicgenre_page () {
             return playlog(name, level_id, parse_int(score));
         }
     });
+
+    if (!logs.length) {
+        alert("スコア一覧を取得できませんでした");
+        throw Error();
+    }
 
     for (var i = 0; i < logs.length; i++) {
         push_playlog_to_best_scores(logs[i]);
