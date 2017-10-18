@@ -625,15 +625,17 @@ function save_data () {
 
 var vm;
 
+var COMPARATOR = { rate: comp_rate };
+
 function attach_view (el) {
     vm = new Vue({
         el: el,
         data: {
-            data:                    data,
-            best_list_order:         comp_rate,
-            recent_candidates_order: comp_rate,
-            scraper:                 null,
-            last_rate:               { best: 0, recent: 0, total: 0, opt: 0 },
+            data:           data,
+            selected_list:  "best",
+            selected_order: "rate",
+            scraper:        null,
+            last_rate:      { best: 0, recent: 0, total: 0, opt: 0 },
         },
         created: function () {
             load_data();
@@ -647,11 +649,16 @@ function attach_view (el) {
             rate: function () {
                 return compute_rate();
             },
-            ordered_best_list: function () {
-                return Object.values(this.data.best_scores).sort(this.best_list_order);
+            best_list: function () {
+                return Object.values(this.data.best_scores).sort(comp_rate);
             },
-            ordered_recent_candidates: function () {
-                return this.data.recent_candidates.copy().sort(this.recent_candidates_order);
+            sorted_list: function () {
+                var comparator = COMPARATOR[this.selected_order];
+                if (this.selected_list == "recent") {
+                    return this.data.recent_candidates.copy().sort(comparator);
+                } else {
+                    return this.best_list.copy().sort(comparator);
+                }
             }
         },
         methods: {
@@ -689,8 +696,8 @@ var view = `
   <p>recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }}</p>
   <p>到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}</p>
   <ul>
-    <li v-for="playlog in ordered_best_list">
-      {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }})
+    <li v-for="playlog, ix in sorted_list">
+      {{ix}}. {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }})
     </li>
   </ul>
 </div>
