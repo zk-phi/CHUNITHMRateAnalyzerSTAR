@@ -410,8 +410,7 @@ for (var i = 0; i < CHART_LIST.length; i++) CHART_BY_NAME[CHART_LIST[i].name] = 
 
 /* Calculate rate from given SCORE and RATE_BASE.
  * reference : http://d.hatena.ne.jp/risette14/20150913/1442160273 */
-function score_to_rate(difficulty, score)
-{
+function score_to_rate(difficulty, score) {
     var rate = score >= 1007500 ? difficulty + 2.0
             :  score >= 1005000 ? difficulty + 1.5 + (score - 1005000) * 10 / 50000
             :  score >= 1000000 ? difficulty + 1.0 + (score - 1000000) *  5 / 50000
@@ -428,7 +427,7 @@ function comp_rate (p1, p2) {
     if (p1.rate !== p2.rate) return p2.rate - p1.rate;
     else if (p1.play_date < p2.play_date) return -1;
     else if (p1.play_date > p2.play_date) return 1;
-    return 0;
+    else return 0;
 }
 
 /* Like parseInt but accepts comma-separated values. */
@@ -684,14 +683,11 @@ function attach_view (el) {
 
 var view = `
 <div id="app" style="position: absolute; top: 0px; left: 0px; min-height: 100%; width: 100%; z-index: 100; background-color: white; opacity: 0.9;">
-  <p v-if="scraper">
-    <button @click="scrape">Scrape!</button>
-  <p>
-  <p>
-    best_rate: {{ rate.best | rate_str }}{{ rate.best - last_rate.best | rate_diff_str }},
-    recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }},
-    到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}
-  <p>
+  <p v-if="scraper"><button @click="scrape">Scrape!</button></p>
+  <p>total_rate: {{ rate.total | rate_str }}{{ rate.total - last_rate.total | rate_diff_str }}</p>
+  <p>best_rate: {{ rate.best | rate_str }}{{ rate.best - last_rate.best | rate_diff_str }}</p>
+  <p>recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }}</p>
+  <p>到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}</p>
   <ul>
     <li v-for="playlog in ordered_best_list">
       {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }})
