@@ -660,6 +660,38 @@ var COMPARATOR = {
     score:      comp_score
 };
 
+var SECTIONS = {
+    rate: [
+        { title: "レート対象",   condition: function (p,i,l) { return i <= (l == "recent" ? 10 : 30); } },
+        { title: "レート対象外", condition: function (p,i,l) { return true; } }
+    ],
+    difficulty: [
+        { title: "LEVEL 14",  condition: function (p) { return p.difficulty >= 14.0; } },
+        { title: "LEVEL 13+", condition: function (p) { return p.difficulty >= 13.7; } },
+        { title: "LEVEL 13",  condition: function (p) { return p.difficulty >= 13.0; } },
+        { title: "LEVEL 12+", condition: function (p) { return p.difficulty >= 12.7; } },
+        { title: "LEVEL 12",  condition: function (p) { return p.difficulty >= 12.0; } },
+        { title: "LEVEL 11+", condition: function (p) { return p.difficulty >= 11.7; } },
+        { title: "LEVEL 11",  condition: function (p) { return p.difficulty >= 11.0; } },
+        { title: "LEVEL 10+", condition: function (p) { return p.difficulty >= 10.7; } },
+        { title: "LEVEL 10",  condition: function (p) { return p.difficulty >= 10.0; } },
+        { title: "NO DATA",   condition: function (p) { return true; } }
+    ],
+    play_date: [
+        { title: "最近プレーした順", condition: function (p) { return true; } }
+    ],
+    score: [
+        { title: "RANK SSS", condition: function (p) { return p.score >= 1007500; } },
+        { title: "RANK SS+", condition: function (p) { return p.score >= 1005000; } },
+        { title: "RANK SS",  condition: function (p) { return p.score >= 1000000; } },
+        { title: "RANK S",   condition: function (p) { return p.score >=  975000; } },
+        { title: "RANK AAA", condition: function (p) { return p.score >=  950000; } },
+        { title: "RANK AA",  condition: function (p) { return p.score >=  925000; } },
+        { title: "RANK A",   condition: function (p) { return p.score >=  900000; } },
+        { title: "RANK < A", condition: function (p) { return true; } }
+    ]
+};
+
 function attach_view (el) {
     Vue.component("playlog", {
         props:    ["playlog", "minimum_best"],
@@ -701,6 +733,19 @@ function attach_view (el) {
                 } else {
                     return this.best_list.copy().sort(comparator);
                 }
+            },
+            sections: function () {
+                var sections = {};
+                var queries  = SECTIONS[this.selected_order].copy();
+                for (var i = 0; queries.length && i < this.sorted_list.length;) {
+                    var query = queries.shift();
+                    sections[i] = query.title;
+                    for (var item = this.sorted_list[i];
+                        item && query.condition(item, i, this.selected_list);) {
+                        item = this.sorted_list[++i];
+                    }
+                }
+                return sections;
             }
         },
         methods: {
@@ -754,7 +799,8 @@ var view = `
   </p>
   <ul>
     <li v-for="playlog, ix in sorted_list">
-      {{ix}}. <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
+      <p v-if="sections[ix]">{{ sections[ix] }}</p>
+      {{ ix + 1 }}. <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
     </li>
   </ul>
 </div>
