@@ -408,7 +408,7 @@ for (var i = 0; i < CHART_LIST.length; i++) CHART_BY_NAME[CHART_LIST[i].name] = 
 
 /* ---- UTILITIES */
 
-/* Calculate rate from given SCORE and RATE_BASE.
+/* Calculate rate from given SCORE and DIFFICULTY.
  * reference : http://d.hatena.ne.jp/risette14/20150913/1442160273 */
 function score_to_rate(difficulty, score) {
     var rate = score >= 1007500 ? difficulty + 2.0
