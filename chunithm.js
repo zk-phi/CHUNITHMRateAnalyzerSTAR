@@ -596,14 +596,7 @@ function scrape_playlog_page () {
 }
 
 function scrape_musicgenre_page () {
-    var level_name = $(".box01_title span").html();
-
-    if (!level_name) {
-        alert("難易度が選択されていません");
-        throw Error();
-    }
-
-    var level_id = LEVEL_ID[level_name.toLowerCase()];
+    var level_id = LEVEL_ID[$(".box01_title span").html().toLowerCase()];
 
     if (level_id == undefined) {
         alert("難易度を取得できませんでした");
@@ -667,7 +660,7 @@ function attach_view (el) {
         created: function () {
             load_data();
             this.last_rate = this.rate;
-            if (location.href.match(/Playlog\.html/))
+            if (location.href.match(/Playlog\.html/) && $(".box01_title span").length)
                 this.scraper = scrape_playlog_page;
             else if (location.href.match(/MusicGenre\.html/))
                 this.scraper = scrape_musicgenre_page;
