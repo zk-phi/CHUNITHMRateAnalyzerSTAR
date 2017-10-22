@@ -511,7 +511,7 @@ function playlog (name, level, score, play_date /* optional */) {
     var chart      = CHART_BY_NAME[name];
     var difficulty = (chart && chart.difficulty[level]) || 0;
     var last_score = data.best_scores[name] || {};
-    var rate       = score_to_rate(difficulty, score);
+    var rate       = difficulty ? score_to_rate(difficulty, score) : 0;
     return {
         name:       name,
         level:      level,
