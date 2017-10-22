@@ -743,7 +743,7 @@ var view = `
       <option value="rate">レート順</option>
       <option value="difficulty">難易度順</option>
       <option value="score">スコア順</option>
-      <option value="play_data">最近プレーした順</option>
+      <option value="play_date">最近プレーした順</option>
     </select>
   </p>
   <p>
