@@ -694,11 +694,21 @@ var vm;
 
 function attach_view (el) {
     Vue.component("playlog", {
-        props:    ["playlog", "minimum_best"],
+        props:    ["playlog", "minimum_best", "list"],
         template: "#playlog",
         computed: {
             best_required_score: function () {
                 return rate_to_score(this.playlog.difficulty, this.minimum_best);
+            },
+            extra_info: function () {
+                if (this.list == "recent") {
+                    return this.playlog.play_date;
+                }
+                if (!isNaN(this.best_required_score)) {
+                    var diff = this.best_required_score - this.playlog.score;
+                    if (diff > 0) return "BEST 枠入りまで: " + diff;
+                }
+                return null;
             }
         }
     });
@@ -800,7 +810,8 @@ var view = `
   <ul>
     <li v-for="playlog, ix in sorted_list">
       <p v-if="sections[ix]">{{ sections[ix] }}</p>
-      {{ ix + 1 }}. <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
+      {{ ix + 1 }}.
+      <playlog :playlog="playlog" :minimum_best="rate.minimum_best" :list="selected_list" />
     </li>
   </ul>
 </div>
@@ -810,9 +821,7 @@ var playlog_template = `
 <template id="playlog">
   <span>
     {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }}), {{ playlog.rate }}
-    <span v-if="!isNaN(best_required_score) && best_required_score > playlog.score">
-      [BEST枠入りまで: {{ best_required_score - playlog.score }}]
-    </span>
+    {{ extra_info }}
   </span>
 </template>
 `;
