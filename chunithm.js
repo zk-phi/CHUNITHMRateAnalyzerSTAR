@@ -412,13 +412,13 @@ for (var i = 0; i < CHART_LIST.length; i++) CHART_BY_NAME[CHART_LIST[i].name] = 
  * reference : http://d.hatena.ne.jp/risette14/20150913/1442160273 */
 function score_to_rate(difficulty, score) {
     var rate = score >= 1007500 ? difficulty + 2.0
-            :  score >= 1005000 ? difficulty + 1.5 + (score - 1005000) * 10 / 50000
-            :  score >= 1000000 ? difficulty + 1.0 + (score - 1000000) *  5 / 50000
-            :  score >=  975000 ? difficulty + 0.0 + (score -  975000) *  2 / 50000
-            :  score >=  950000 ? difficulty - 1.5 + (score -  950000) *  3 / 50000
-            :  score >=  925000 ? difficulty - 3.0 + (score -  925000) *  3 / 50000
-            :  score >=  900000 ? difficulty - 5.0 + (score -  900000) *  4 / 50000
-            :  0;
+             : score >= 1005000 ? difficulty + 1.5 + (score - 1005000) * 10 / 50000
+             : score >= 1000000 ? difficulty + 1.0 + (score - 1000000) *  5 / 50000
+             : score >=  975000 ? difficulty + 0.0 + (score -  975000) *  2 / 50000
+             : score >=  950000 ? difficulty - 1.5 + (score -  950000) *  3 / 50000
+             : score >=  925000 ? difficulty - 3.0 + (score -  925000) *  3 / 50000
+             : score >=  900000 ? difficulty - 5.0 + (score -  900000) *  4 / 50000
+             : 0;
     return Math.floor(rate * 100) / 100;
 }
 
