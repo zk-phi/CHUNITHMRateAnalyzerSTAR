@@ -682,9 +682,9 @@ function attach_view (el) {
         created: function () {
             load_data();
             this.last_rate = this.rate;
-            if (location.href.match(/Playlog\.html/) && $(".box01_title span").length)
+            if (location.href.match(/Playlog\.html/))
                 this.scraper = scrape_playlog_page;
-            else if (location.href.match(/MusicGenre\.html/))
+            else if (location.href.match(/MusicGenre\.html/) && $(".box01_title span").length)
                 this.scraper = scrape_musicgenre_page;
         },
         computed: {
