@@ -651,8 +651,6 @@ function save_data () {
 
 /* ---- VIEW MODEL */
 
-var vm;
-
 var COMPARATOR = {
     rate:       comp_rate,
     difficulty: comp_difficulty,
@@ -691,6 +689,8 @@ var SECTIONS = {
         { title: "RANK < A", condition: function (p) { return true; } }
     ]
 };
+
+var vm;
 
 function attach_view (el) {
     vm = new Vue({
