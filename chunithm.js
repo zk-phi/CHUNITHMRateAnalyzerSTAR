@@ -630,6 +630,10 @@ var vm;
 var COMPARATOR = { rate: comp_rate };
 
 function attach_view (el) {
+    Vue.component("playlog", {
+        props: ["playlog"],
+        template: "#playlog",
+    });
     vm = new Vue({
         el: el,
         data: {
@@ -700,14 +704,22 @@ var view = `
   <p>最低BESTスコア: {{ rate.minimum_best }}</p>
   <ul>
     <li v-for="playlog, ix in sorted_list">
-      {{ix}}. {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }})
+      {{ix}}. <playlog :playlog="playlog" />
     </li>
   </ul>
 </div>
-`
+`;
+
+var playlog_template = `
+<template id="playlog">
+  <span>
+    {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }}), {{ playlog.rate }}
+  </span>
+</template>
+`;
 
 load_scripts_in_sequence(DEPENDENCIES, function () {
-    $(view).appendTo("body");
+    $("body").html("").append(view).append(playlog_template);
     attach_view("#app");
 }, function (s) {
     console.log("Loading: " + s + "...");
