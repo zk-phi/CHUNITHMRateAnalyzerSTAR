@@ -453,8 +453,8 @@ function comp_difficulty (p1, p2) {
 
 /* Compare two playlogs by play_date. */
 function comp_play_date (p1, p2) {
-    if (p1.play_date < p2.play_date) return -1;
-    else if (p1.play_date > p2.play_date) return 1;
+    if (p1.play_date > p2.play_date) return -1;
+    else if (p1.play_date < p2.play_date) return 1;
     else return 0;
 }
 
@@ -743,7 +743,7 @@ var view = `
       <option value="rate">レート順</option>
       <option value="difficulty">難易度順</option>
       <option value="score">スコア順</option>
-      <option value="play_data">プレー日順</option>
+      <option value="play_data">最近プレーした順</option>
     </select>
   </p>
   <p>
