@@ -5,8 +5,7 @@ var CRA_VERSION = 170917;
 /* All resources must be provided via HTTPS (to avoid "mixedcontent") */
 var DEPENDENCIES = [
     "https://platform.twitter.com/widgets.js", // Twitter tweet/follow button
-    "https://unpkg.com/vue",                   // Vue.js
-    "https://max-eipi.github.io/CHUNITHMRateAnalyzer/gaslibs/offer_playlog.js"
+    "https://cdn.jsdelivr.net/npm/vue"         // Vue.js
 ];
 
 var LEVEL_ID = { basic: 0, advance: 1, expert: 2, master: 3, worldsend: 4 };
