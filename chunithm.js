@@ -693,15 +693,6 @@ var SECTIONS = {
 };
 
 function attach_view (el) {
-    Vue.component("playlog", {
-        props:    ["playlog", "minimum_best"],
-        template: "#playlog",
-        computed: {
-            best_required_score: function () {
-                return rate_to_score(this.playlog.difficulty, this.minimum_best);
-            }
-        }
-    });
     vm = new Vue({
         el: el,
         data: {
@@ -733,6 +724,14 @@ function attach_view (el) {
                 } else {
                     return this.best_list.copy().sort(comparator);
                 }
+            },
+            required_best_scores: function () {
+                var res = {};
+                for (var i = 0; i < this.best_list.length; i++) {
+                    var log = this.best_list[i]
+                    res[log.name] = rate_to_score(log.difficulty, this.rate.minimum_best);
+                }
+                return res;
             },
             sections: function () {
                 var sections = {};
@@ -798,28 +797,21 @@ var view = `
     </select>
   </p>
   <ul>
-    <li v-for="playlog, ix in sorted_list">
+    <li v-for="log, ix in sorted_list">
       <p v-if="sections[ix]">{{ sections[ix] }}</p>
-      {{ ix + 1 }}. <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
+      {{ ix + 1 }}.
+      {{ log.name }}, {{ log.score }} ({{ log.diff.score }}), {{ log.rate }}
+      <span v-if="!isNaN(required_best_scores[log.name]) && required_best_scores[log.name] > log.score">
+        [BEST枠入りまで: {{ required_best_scores[log.name] - log.score }}]
+      </span>
     </li>
   </ul>
 </div>
 `;
 
-var playlog_template = `
-<template id="playlog">
-  <span>
-    {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }}), {{ playlog.rate }}
-    <span v-if="!isNaN(best_required_score) && best_required_score > playlog.score">
-      [BEST枠入りまで: {{ best_required_score - playlog.score }}]
-    </span>
-  </span>
-</template>
-`;
-
 load_scripts_in_sequence(DEPENDENCIES, function () {
     $("body *").hide();
-    $("body").append(view).append(playlog_template);
+    $("body").append(view);
     attach_view("#app");
 }, function (s) {
     console.log("Loading: " + s + "...");
