@@ -818,7 +818,8 @@ var playlog_template = `
 `;
 
 load_scripts_in_sequence(DEPENDENCIES, function () {
-    $("body").html("").append(view).append(playlog_template);
+    $("body *").hide();
+    $("body").append(view).append(playlog_template);
     attach_view("#app");
 }, function (s) {
     console.log("Loading: " + s + "...");
