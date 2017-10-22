@@ -540,15 +540,17 @@ function push_playlog_to_recent_candidates (playlog) {
 function compute_rate () {
     var best_list   = Object.values(this.data.best_scores).sort(comp_rate).slice(0, 30);
     var recent_list = this.data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
-    var best   = best_list.map(function (x) { return x.rate; }).average();
-    var recent = recent_list.map(function (x) { return x.rate; }).average();
-    var opt_recent = best_list.length ? best_list[0].rate : 0;
+    var best        = best_list.map(function (x) { return x.rate; }).average();
+    var recent      = recent_list.map(function (x) { return x.rate; }).average();
+    var opt_recent  = best_list.length ? best_list[0].rate : 0;
+    var best_border = best_list.length ? best_list[best_list.length - 1].rate : 0;
 
     return {
-        best:   best,
-        recent: recent,
-        opt:    (best * 3 + opt_recent) / 4,
-        total:  (best * 3 + recent) / 4
+        best:         best,
+        recent:       recent,
+        opt:          (best * 3 + opt_recent) / 4,
+        total:        (best * 3 + recent) / 4,
+        minimum_best: best_border
     };
 }
 
@@ -695,6 +697,7 @@ var view = `
   <p>best_rate: {{ rate.best | rate_str }}{{ rate.best - last_rate.best | rate_diff_str }}</p>
   <p>recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }}</p>
   <p>到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}</p>
+  <p>最低BESTスコア: {{ rate.minimum_best }}</p>
   <ul>
     <li v-for="playlog, ix in sorted_list">
       {{ix}}. {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }})
