@@ -709,6 +709,18 @@ function attach_view (el) {
                 }
                 return null;
             }
+        },
+        filters: {
+            rate_diff_str: function (num) {
+                return num <= -10.0 ? " " + num.toString().substring(0, 6)
+                    :  num <= -0.01 ? " " + num.toString().substring(0, 5)
+                    :  num >=  10.0 ? " +" + num.toString().substring(0, 5)
+                    :  num >=  0.01 ? " +" + num.toString().substring(0, 4)
+                    :  "";
+            },
+            score_diff_str: function (num) {
+                return num < 0 ? num : "+" + num;
+            }
         }
     });
     vm = new Vue({
@@ -765,6 +777,12 @@ function attach_view (el) {
             },
             skip_scraping: function () {
                 this.scraper = null;
+            },
+            set_list: function (list) {
+                this.selected_list = list;
+            },
+            set_order: function (order) {
+                this.selected_order = order;
             }
         },
         filters: {
@@ -772,10 +790,10 @@ function attach_view (el) {
                 return num.toString().substring(0, num >= 10 ? 5 : 4);
             },
             rate_diff_str: function (num) {
-                return num <= -10.0 ? "[" + num.toString().substring(0, 6) + "]"
-                    :  num <= -0.01 ? "[" + num.toString().substring(0, 5) + "]"
-                    :  num >=  10.0 ? "[+" + num.toString().substring(0, 5) + "]"
-                    :  num >=  0.01 ? "[+" + num.toString().substring(0, 4) + "]"
+                return num <= -10.0 ? " " + num.toString().substring(0, 6)
+                    :  num <= -0.01 ? " " + num.toString().substring(0, 5)
+                    :  num >=  10.0 ? " +" + num.toString().substring(0, 5)
+                    :  num >=  0.01 ? " +" + num.toString().substring(0, 4)
                     :  "";
             }
         }
@@ -785,50 +803,124 @@ function attach_view (el) {
 /* ---- VIEW */
 
 var view = `
-<div id="app" style="position: absolute; top: 0px; left: 0px; min-height: 100%; width: 100%; z-index: 100; background-color: white; opacity: 0.9;">
-  <p v-if="scraper"><button @click="scrape">Scrape!</button></p>
-  <p>total_rate: {{ rate.total | rate_str }}{{ rate.total - last_rate.total | rate_diff_str }}</p>
-  <p>best_rate: {{ rate.best | rate_str }}{{ rate.best - last_rate.best | rate_diff_str }}</p>
-  <p>recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }}</p>
-  <p>到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}</p>
-  <p>最低BESTスコア: {{ rate.minimum_best }}</p>
-  <p>
-    <select v-model="selected_order">
-      <option value="rate">レート順</option>
-      <option value="difficulty">難易度順</option>
-      <option value="score">スコア順</option>
-      <option value="play_date">最近プレーした順</option>
-    </select>
-  </p>
-  <p>
-    <select v-model="selected_list">
-      <option value="best">ベストスコア</option>
-      <option value="recent">Recent 枠, 候補枠</option>
-    </select>
-  </p>
-  <ul>
-    <li v-for="playlog, ix in sorted_list">
-      <p v-if="sections[ix]">{{ sections[ix] }}</p>
-      {{ ix + 1 }}.
-      <playlog :playlog="playlog" :minimum_best="rate.minimum_best" :list="selected_list" />
-    </li>
-  </ul>
+<div id="cra">
+  <div id="header">
+    <div class="item">CHUNITHM Rate Analyzer ☆ (β)</div>
+    <div id="hamburger" class="item right clickable shrinked"></div>
+    <div class="menu">
+      <div class="item clickable">使い方</div>
+      <div class="item clickable shrinked">リスト</div>
+      <div class="submenu">
+        <div class="item clickable" @click="set_list('best')">ベストスコア</div>
+        <div class="item clickable" @click="set_list('recent')">Recent 枠, 候補枠</div>
+      </div>
+      <div class="item clickable shrinked">並び順</div>
+      <div class="submenu">
+        <div class="item clickable" @click="set_order('rate')">レート順</div>
+        <div class="item clickable" @click="set_order('difficulty')">難易度順</div>
+        <div class="item clickable" @click="set_order('score')">スコア順</div>
+        <div class="item clickable" @click="set_order('play_date')">最近プレーした順</div>
+      </div>
+      <div class="item footer">
+        Built with ♡ by <a href="http://twitter.com/zk_phi">@zk_phi</a>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="scraper" id="dialog">
+    <div class="body">
+      <span class="nobreak">CHUNITHM-NET を検出しました。</span>
+      <span class="nobreak">データを取り込みますか？</span>
+      <span class="triangle"></span>
+      <p class="actions">
+        <span class="action clickable secondary" @click="skip_scraping">スキップ</span>
+        <span class="action clickable primary" @click="scrape">取り込む</span>
+      </p>
+    </div>
+  </div>
+
+  <div id="content">
+    <div id="rating" class="section">
+      <div class="title">レート</div>
+      <div class="body">
+        <div class="card">
+          <div id="total_rate">
+            {{ rate.total | rate_str }}
+            <span class="dim">{{ rate.total - last_rate.total | rate_diff_str }}</span>
+          </div>
+          <div id="rate_details">
+            B: {{ rate.best | rate_str }}
+            <span class="dim">{{ rate.best - last_rate.best | rate_diff_str }}</span>
+            /
+            R: {{ rate.recent | rate_str }}
+            <span class="dim">{{ rate.recent - last_rate.recent | rate_diff_str }}</span>
+          </div>
+          <div class="hr"></div>
+          <div id="best_border">
+            BEST 枠ボーダー: {{ rate.minimum_best | rate_str }}
+            <span class="dim">{{ rate.minimum_best - last_rate.minimum_best | rate_diff_str }}</span>
+          </div>
+          <div id="reachable_rate">
+            レート {{ rate.opt | rate_str }}
+            <span class="dim">{{ rate.opt - last_rate.opt | rate_diff_str }}</span>
+            まで到達可能
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="list" class="section">
+      <div class="title">
+        {{ selected_list == "best" ? "ベストスコア" : "Recent 枠, 候補枠"}}
+      </div>
+      <div class="body">
+        <div v-for="playlog, ix in sorted_list" class="item">
+          <p v-if="sections[ix]">{{ sections[ix] }}</p>
+          {{ ix + 1 }}.
+          <playlog :playlog="playlog" :minimum_best="rate.minimum_best" :list="selected_list" />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;
 
 var playlog_template = `
 <template id="playlog">
-  <span>
-    {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }}), {{ playlog.rate }}
-    {{ extra_info }}
-  </span>
+  <div class="card master">
+    <div class="name">{{ playlog.name }}</div>
+    <div class="rate">
+      Rate： {{ playlog.rate | rate_str }}
+      <span class="dim">{{ playlog.diff.rate | rate_diff_str }}</span>
+    </div>
+    <div class="score">
+      Score：{{ playlog.score }}
+      <span class="dim">{{ playlog.score | score_diff_str }}</span>
+    </div>
+    <div v-if="extra_info">
+      <div class="hr"></div>
+      <div class="dim">{{ extra_info }}</div>
+    </div>
+  </div>
 </template>
 `;
 
+var head = `
+<title>CHUNITHM Rate Analyzer ☆ (β)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+`;
+
+/* style.css */
+var css = `<style>#dialog:before,#header{left:0;top:0;position:fixed}*{margin:0;padding:0;box-sizing:border-box}body{font-size:15px;color:#f4f4f4;font-family:'Hiragino Kaku Gothic ProN','ヒラギノ角ゴ ProN W3',Meiryo,メイリオ,Osaka,'MS PGothic',arial,helvetica,sans-serif}a,a:hover,a:visited{color:#f4f4f4;text-decoration:none}.clickable{cursor:pointer}.shrinked+*{display:none}#header{width:100%;background-color:#222;z-index:1}#header .item{height:35px;width:100%;padding:10px;line-height:15px}#header .item.right{margin-top:-35px;text-align:right}#header .item.footer{font-size:10px;height:30px;line-height:10px;color:#aaa}#hamburger.shrinked:before{content:"≡"}#hamburger.expanded:before{content:"×"}#header .menu .item{background-color:#333;border:1px solid #222}#header .menu .item.shrinked:before{content:"▶ ";color:#aaa}#header .menu .item.expanded:before{content:"▼ ";color:#aaa}#header .submenu .item{background-color:#444;border:1px solid #333}#content{margin-top:35px;padding:10px;width:100%;min-height:100vh;background-color:#222}#content .section{max-width:350px;margin:auto}#content .section+.section{margin-top:20px}#content .section .title{height:35px;line-height:15px;padding:10px;border-radius:3px 3px 0 0;background-color:#444}#content .section .body{padding:10px;border-radius:0 0 3px 3px;background-color:#333}#content .card{padding:10px;border-radius:3px;background-color:#da9306}#content .card .dim{font-size:12px;opacity:.6}#content .card.basic{background-color:#207720}#content .card.advanced{background-color:#ab6b1f}#content .card.expert{background-color:#a7224e}#content .card.master{background-color:#582080}#content .card.empty{background-color:#444}#content .card .hr{margin:10px 0;border-bottom:1px solid #f4f4f4;opacity:.2}#rating #total_rate{font-size:60px}#list .item+.item{margin-top:20px}#list .card .name{font-size:25px}#dialog:before{width:100vw;height:100vh;z-index:-1;background-color:#000;opacity:.7;content:" "}#dialog{position:fixed;left:5vw;top:150px;width:90vw;z-index:2}#dialog .body{width:100%;max-width:500px;padding:20px;margin:auto;border-radius:3px;background-color:#eee;color:#222;border:1px solid #aaa}#dialog .body .nobreak{display:inline-block}#dialog .body .actions{margin-top:30px;text-align:right}#dialog .body .actions .action{margin-left:10px}#dialog .body .actions .action.primary{color:#0275d8;font-weight:700}#dialog .body .actions .action.secondary{color:#444}</style>`;
+
 load_scripts_in_sequence(DEPENDENCIES, function () {
+    $("head").html(head);
     $("body *").hide();
-    $("body").append(view).append(playlog_template);
-    attach_view("#app");
+    $("body").append(view).append(playlog_template).append(css);
+    attach_view("#cra");
+    $(".shrinked").click(function () { $(this).toggleClass("expanded").toggleClass("shrinked"); });
 }, function (s) {
     console.log("Loading: " + s + "...");
 });
