@@ -422,6 +422,22 @@ function score_to_rate(difficulty, score) {
     return Math.floor(rate * 100) / 100;
 }
 
+// Calculate score required to achieve given RATE wrt DIFFICULTY. This
+// function may return NaN to indicate that the rate is NOT achievable
+// wrt DIFFICULTY.
+function rate_to_score(difficulty, target_rate) {
+    var diff = target_rate - difficulty;
+    return diff  >  2.0 ? NaN
+        :  diff ==  2.0 ? 1007500
+        :  diff >=  1.5 ? Math.floor((diff -  1.5) * 50000 / 10) + 1005000
+        :  diff >=  1.0 ? Math.floor((diff -  1.0) * 50000 /  5) + 1000000
+        :  diff >=  0.0 ? Math.floor((diff -  0.0) * 50000 /  2) +  975000
+        :  diff >= -1.5 ? Math.floor((diff - -1.5) * 50000 /  3) +  950000
+        :  diff >= -3.0 ? Math.floor((diff - -3.0) * 50000 /  3) +  925000
+        :  diff >= -5.0 ? Math.floor((diff - -5.0) * 50000 /  4) +  900000
+        :  900000;
+}
+
 /* Compare two playlogs by rate and return negative if P1 is greater than P2. */
 function comp_rate (p1, p2) {
     if (p1.rate !== p2.rate) return p2.rate - p1.rate;
@@ -631,8 +647,13 @@ var COMPARATOR = { rate: comp_rate };
 
 function attach_view (el) {
     Vue.component("playlog", {
-        props: ["playlog"],
+        props: ["playlog", "minimum_best"],
         template: "#playlog",
+        computed: {
+            best_required_score: function () {
+                return rate_to_score(this.playlog.difficulty, this.minimum_best);
+            }
+        }
     });
     vm = new Vue({
         el: el,
@@ -704,7 +725,7 @@ var view = `
   <p>最低BESTスコア: {{ rate.minimum_best }}</p>
   <ul>
     <li v-for="playlog, ix in sorted_list">
-      {{ix}}. <playlog :playlog="playlog" />
+      {{ix}}. <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
     </li>
   </ul>
 </div>
@@ -714,6 +735,9 @@ var playlog_template = `
 <template id="playlog">
   <span>
     {{ playlog.name }}, {{ playlog.score }} ({{ playlog.diff.score }}), {{ playlog.rate }}
+    <span v-if="!isNaN(best_required_score) && best_required_score > playlog.score">
+      [BEST枠入りまで: {{ best_required_score - playlog.score }}]
+    </span>
   </span>
 </template>
 `;
