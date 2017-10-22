@@ -590,7 +590,7 @@ function compute_rate () {
 /* ---- SCRAPING */
 
 function scrape_playlog_page () {
-    var logs =  $(".frame02.w400").map(function () {
+    var logs = $(".frame02.w400").map(function () {
         var date = $(this).find(".play_datalist_date").html();
         var level = $(this).find(".play_track_result img").attr("src").match("text_(.*)\.png")[1];
         var name = $(this).find(".play_musicdata_title").html();
