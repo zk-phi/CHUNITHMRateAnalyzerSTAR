@@ -446,6 +446,23 @@ function comp_rate (p1, p2) {
     else return 0;
 }
 
+/* Compare two playlogs by difficulty. */
+function comp_difficulty (p1, p2) {
+    return - (p1.difficulty - p2.difficulty);
+}
+
+/* Compare two playlogs by play_date. */
+function comp_play_date (p1, p2) {
+    if (p1.play_date < p2.play_date) return -1;
+    else if (p1.play_date > p2.play_date) return 1;
+    else return 0;
+}
+
+/* Compare two playlogs by score. */
+function comp_score (p1, p2) {
+    return - (p1.score - p2.score);
+}
+
 /* Like parseInt but accepts comma-separated values. */
 function parse_int (str) {
     return parseInt(str.split(",").join(""));
@@ -636,7 +653,12 @@ function save_data () {
 
 var vm;
 
-var COMPARATOR = { rate: comp_rate };
+var COMPARATOR = {
+    rate:       comp_rate,
+    difficulty: comp_difficulty,
+    play_date:  comp_play_date,
+    score:      comp_score
+};
 
 function attach_view (el) {
     Vue.component("playlog", {
@@ -716,6 +738,20 @@ var view = `
   <p>recent_rate: {{ rate.recent | rate_str }}{{ rate.recent - last_rate.recent | rate_diff_str }}</p>
   <p>到達可能: {{ rate.opt | rate_str }}{{ rate.opt - last_rate.opt | rate_diff_str }}</p>
   <p>最低BESTスコア: {{ rate.minimum_best }}</p>
+  <p>
+    <select v-model="selected_order">
+      <option value="rate">レート順</option>
+      <option value="difficulty">難易度順</option>
+      <option value="score">スコア順</option>
+      <option value="play_data">プレー日順</option>
+    </select>
+  </p>
+  <p>
+    <select v-model="selected_list">
+      <option value="best">ベストスコア</option>
+      <option value="recent">Recent 枠, 候補枠</option>
+    </select>
+  </p>
   <ul>
     <li v-for="playlog, ix in sorted_list">
       {{ix}}. <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
