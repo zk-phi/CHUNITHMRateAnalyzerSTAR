@@ -428,14 +428,14 @@ function score_to_rate(difficulty, score) {
 function rate_to_score(difficulty, target_rate) {
     var diff = target_rate - difficulty;
     return diff  >  2.0 ? NaN
-        :  diff ==  2.0 ? 1007500
-        :  diff >=  1.5 ? Math.floor((diff -  1.5) * 50000 / 10) + 1005000
-        :  diff >=  1.0 ? Math.floor((diff -  1.0) * 50000 /  5) + 1000000
-        :  diff >=  0.0 ? Math.floor((diff -  0.0) * 50000 /  2) +  975000
-        :  diff >= -1.5 ? Math.floor((diff - -1.5) * 50000 /  3) +  950000
-        :  diff >= -3.0 ? Math.floor((diff - -3.0) * 50000 /  3) +  925000
-        :  diff >= -5.0 ? Math.floor((diff - -5.0) * 50000 /  4) +  900000
-        :  900000;
+         : diff ==  2.0 ? 1007500
+         : diff >=  1.5 ? Math.floor((diff -  1.5) * 50000 / 10) + 1005000
+         : diff >=  1.0 ? Math.floor((diff -  1.0) * 50000 /  5) + 1000000
+         : diff >=  0.0 ? Math.floor((diff -  0.0) * 50000 /  2) +  975000
+         : diff >= -1.5 ? Math.floor((diff - -1.5) * 50000 /  3) +  950000
+         : diff >= -3.0 ? Math.floor((diff - -3.0) * 50000 /  3) +  925000
+         : diff >= -5.0 ? Math.floor((diff - -5.0) * 50000 /  4) +  900000
+         : 900000;
 }
 
 /* Compare two playlogs by rate and return negative if P1 is greater than P2. */
@@ -511,7 +511,7 @@ function playlog (name, level, score, play_date /* optional */) {
     var chart      = CHART_BY_NAME[name];
     var difficulty = (chart && chart.difficulty[level]) || 0;
     var last_score = data.best_scores[name] || {};
-    var rate = score_to_rate(difficulty, score);
+    var rate       = score_to_rate(difficulty, score);
     return {
         name:       name,
         level:      level,
@@ -662,7 +662,7 @@ var COMPARATOR = {
 
 function attach_view (el) {
     Vue.component("playlog", {
-        props: ["playlog", "minimum_best"],
+        props:    ["playlog", "minimum_best"],
         template: "#playlog",
         computed: {
             best_required_score: function () {
