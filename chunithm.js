@@ -767,20 +767,10 @@ function attach_view (el) {
             }
         },
         methods: {
-            scrape: function () {
-                this.scraper();
-                this.scraper = null;
-                save_data();
-            },
-            skip_scraping: function () {
-                this.scraper = null;
-            },
-            set_list: function (list) {
-                this.selected_list = list;
-            },
-            set_order: function (order) {
-                this.selected_order = order;
-            }
+            scrape:        function () { this.scraper(); this.scraper = null; save_data(); },
+            skip_scraping: function () { this.scraper = null; },
+            set_list:      function (list) { this.selected_list = list; },
+            set_order:     function (order) { this.selected_order = order; }
         },
         filters: {
             rate_str: function (num) {
