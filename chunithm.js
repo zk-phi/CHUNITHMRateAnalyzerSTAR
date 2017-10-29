@@ -744,15 +744,12 @@ function attach_view (el) {
             rate: function () {
                 return compute_rate();
             },
-            best_list: function () {
-                return Object.values(this.data.best_scores).sort(comp_rate);
-            },
             sorted_list: function () {
                 var comparator = COMPARATOR[this.selected_order];
                 if (this.selected_list == "recent") {
                     return this.data.recent_candidates.copy().sort(comparator);
                 } else {
-                    return this.best_list.copy().sort(comparator);
+                    return Object.values(this.data.best_scores).sort(comparator);
                 }
             },
             sections: function () {
