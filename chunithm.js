@@ -641,11 +641,11 @@ function scrape_musicgenre_page () {
 
 function load_data () {
     var data_str = localStorage.getItem("cra_star_data");
-    if (data_str) Object.assign(this.data, JSON.parse(data_str));
+    if (data_str) Object.assign(data, JSON.parse(data_str));
 }
 
 function save_data () {
-    localStorage.setItem("cra_star_data", JSON.stringify(this.data));
+    localStorage.setItem("cra_star_data", JSON.stringify(data));
 }
 
 /* ---- VIEW MODEL */
