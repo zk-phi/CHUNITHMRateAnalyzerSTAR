@@ -2,12 +2,6 @@
 
 var CRA_VERSION = 170917;
 
-/* All resources must be provided via HTTPS (to avoid "mixedcontent") */
-var DEPENDENCIES = [
-    "https://platform.twitter.com/widgets.js", // Twitter tweet/follow button
-    "https://cdn.jsdelivr.net/npm/vue"         // Vue.js
-];
-
 var LEVEL_ID = { basic: 0, advance: 1, expert: 2, master: 3, worldsend: 4 };
 
 var CHART_LIST = [
@@ -467,20 +461,6 @@ function parse_int (str) {
     return parseInt(str.split(",").join(""));
 }
 
-/* Load scripts listed in SCRIPTS in sequence, and call ONLOAD if all
-scripts are loaded. */
-function load_scripts_in_sequence (scripts, onload, loading) {
-    var script = scripts.shift();
-    if (script) {
-        if (loading) loading(script);
-        $.getScript(script, function (){
-            load_scripts_in_sequence(scripts, onload, loading);
-        });
-    } else if (onload) {
-        onload();
-    }
-}
-
 /* Shallow copy an array. */
 Array.prototype.copy = function () {
     return [].concat(this);
@@ -899,12 +879,13 @@ var head = `
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<script src="https://platform.twitter.com/widgets.js"></script>
 `;
 
 /* style.css */
 var css = `<style>#dialog:before,#header{left:0;top:0;position:fixed}*{margin:0;padding:0;box-sizing:border-box}body{font-size:15px;color:#f4f4f4;font-family:'Hiragino Kaku Gothic ProN','ヒラギノ角ゴ ProN W3',Meiryo,メイリオ,Osaka,'MS PGothic',arial,helvetica,sans-serif}a,a:hover,a:visited{color:#f4f4f4;text-decoration:none}.clickable{cursor:pointer}.dim{font-size:12px;opacity:.6}#header{background-color:#333;z-index:1}@media (max-width:962px){#header{width:100%}.shrinked+*{display:none}#hamburger.shrinked:before{content:"≡"}#hamburger.expanded:before{content:"×"}#header .menu .item.shrinked:before{content:"▶ ";color:#aaa}#header .menu .item.expanded:before{content:"▼ ";color:#aaa}}@media (min-width:962px){#header{height:100vh;width:320px}#content{margin-left:320px}}#header .item{height:35px;width:100%;padding:10px;line-height:15px}#header .item.right{margin-top:-35px;text-align:right}#header .item.footer{font-size:10px;height:30px;line-height:10px;color:#aaa}#header .menu .item{background-color:#333;border:1px solid #222}#header .submenu .item{background-color:#444;border:1px solid #333}@media (max-width:962px){#content_wrapper{margin-top:35px}}#content{padding:20px;min-height:100vh;background-color:#222}#content .section{max-width:384px;margin:auto}#content .section+.section{margin-top:20px}#content .section .title{height:35px;line-height:15px;padding:10px;border-radius:3px 3px 0 0;background-color:#444}#content .section .title.right{margin-top:-35px;text-align:right}#content .section .body{padding:10px;border-radius:0 0 3px 3px;background-color:#333}#content .card{padding:10px;border-radius:3px;background-color:#da9306}#content .card.basic{background-color:#207720}#content .card.advanced{background-color:#ab6b1f}#content .card.expert{background-color:#a7224e}#content .card.master{background-color:#582080}#content .card.empty{background-color:#444}#content .card .hr{margin:10px 0;border-bottom:1px solid #f4f4f4;opacity:.2}#rating #total_rate{font-size:60px}#list .item+.item{margin-top:20px}#list .card .name{font-size:25px}#dialog:before{width:100vw;height:100vh;z-index:-1;background-color:#000;opacity:.7;content:" "}#dialog{position:fixed;left:5vw;top:150px;width:90vw;z-index:2}#dialog .body{width:100%;max-width:500px;padding:20px;margin:auto;border-radius:3px;background-color:#eee;color:#222;border:1px solid #aaa}#dialog .body .nobreak{display:inline-block}#dialog .body .actions{margin-top:30px;text-align:right}#dialog .body .actions .action{margin-left:10px}#dialog .body .actions .action.primary{color:#0275d8;font-weight:700}#dialog .body .actions .action.secondary{color:#444}</style>`;
 
-load_scripts_in_sequence(DEPENDENCIES, function () {
+$.getScript("https://cdn.jsdelivr.net/npm/vue", function () {
     $("head").html(head);
     $("body *").hide();
     $("body").append(view).append(playlog_template).append(css);
