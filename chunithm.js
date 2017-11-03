@@ -477,7 +477,7 @@ function rate_diff_str (num) {
 
 /* Format an integer to the form "+xxxx" or "-xxxx". */
 function score_diff_str (num) {
-    return num < 0 ? num : "+" + num;
+    return !num ? "" : num < 0 ? num : "+" + num;
 }
 
 /* Shallow copy an array. */
