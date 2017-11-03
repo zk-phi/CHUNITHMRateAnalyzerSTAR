@@ -858,15 +858,12 @@ var view = `
         <div class="body">
           <div class="card">
             <div id="total_rate">
-              {{ rate.total | rate_str }}
-              <span class="dim">{{ rate.total - last_rate.total | rate_diff_str }}</span>
+              {{ rate.total | rate_str }}<span class="dim">{{ rate.total - last_rate.total | rate_diff_str }}</span>
             </div>
             <div id="rate_details">
-              B: {{ rate.best | rate_str }}
-              <span class="dim">{{ rate.best - last_rate.best | rate_diff_str }}</span>
+              B: {{ rate.best | rate_str }}<span class="dim">{{ rate.best - last_rate.best | rate_diff_str }}</span>
               /
-              R: {{ rate.recent | rate_str }}
-              <span class="dim">{{ rate.recent - last_rate.recent | rate_diff_str }}</span>
+              R: {{ rate.recent | rate_str }}<span class="dim">{{ rate.recent - last_rate.recent | rate_diff_str }}</span>
             </div>
             <div class="hr"></div>
             <div id="best_border">
