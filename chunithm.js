@@ -658,11 +658,16 @@ function save_data () {
 
 /* ---- VIEW MODEL */
 
-var COMPARATOR = {
-    rate:       comp_rate,
-    difficulty: comp_difficulty,
-    play_date:  comp_play_date,
-    score:      comp_score
+var LIST_TITLES = {
+    best: "ベストスコア",
+    recent: "Recent 枠",
+};
+
+var ORDERS = {
+    rate:       { title: "レート順", comparator: comp_rate },
+    difficulty: { title: "難易度順", comparator: comp_difficulty },
+    play_date:  { title: "プレー日時順", comparator: comp_play_date },
+    score:      { title: "スコア順", comparator: comp_score }
 };
 
 var SECTIONS = {
@@ -750,6 +755,12 @@ function attach_view (el) {
                 this.scraper = scrape_musicgenre_page;
         },
         computed: {
+            list_title: function () {
+                return LIST_TITLES[this.selected_list];
+            },
+            order_title: function () {
+                return ORDERS[this.selected_order].title;
+            },
             rate: function () {
                 return compute_rate();
             },
@@ -757,7 +768,7 @@ function attach_view (el) {
                 return Object.values(this.data.best_scores).map(Object.values).flatten();
             },
             sorted_list: function () {
-                var comparator = COMPARATOR[this.selected_order];
+                var comparator = ORDERS[this.selected_order].comparator;
                 if (this.selected_list == "recent") {
                     return this.data.recent_candidates.copy().sort(comparator);
                 } else {
@@ -806,17 +817,17 @@ var view = `
     <div id="hamburger" class="item right clickable shrinked"></div>
     <div class="menu">
       <a target="_blank" href="https://zk-phi.github.io/CHUNITHMRateAnalyzerSTAR/"><div class="item clickable">使い方</div></a>
-      <div class="item clickable shrinked">リスト</div>
+      <div class="item clickable shrinked">リスト: {{ list_title }}</div>
       <div class="submenu">
         <div class="item clickable" @click="set_list('best')">ベストスコア</div>
         <div class="item clickable" @click="set_list('recent')">Recent 枠, 候補枠</div>
       </div>
-      <div class="item clickable shrinked">並び順</div>
+      <div class="item clickable shrinked">並び順: {{ order_title }}</div>
       <div class="submenu">
         <div class="item clickable" @click="set_order('rate')">レート順</div>
         <div class="item clickable" @click="set_order('difficulty')">難易度順</div>
         <div class="item clickable" @click="set_order('score')">スコア順</div>
-        <div class="item clickable" @click="set_order('play_date')">最近プレーした順</div>
+        <div class="item clickable" @click="set_order('play_date')">プレー日時順</div>
       </div>
       <div class="item footer">
         Built with ♡ by <a target="_blank" href="http://twitter.com/zk_phi">@zk_phi</a>
@@ -879,9 +890,7 @@ var view = `
       </div>
 
       <div id="list" class="section">
-        <div class="title">
-          {{ selected_list == "best" ? "ベストスコア" : "Recent 枠, 候補枠"}}
-        </div>
+        <div class="title">{{ list_title }}</div>
         <div class="body">
           <div v-for="playlog, ix in sorted_list" class="item">
             <p class="subsection" v-if="sections[ix]">{{ sections[ix] }}</p>
