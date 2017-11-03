@@ -1,7 +1,6 @@
 /* CHUNITHM Rate Analyzer STAR (C) zk_phi 2017-*/
 
-var CRA_VERSION = 170917;
-
+var CRA_VERSION = 171104;
 
 var CHART_LIST = [
     /*  内部ID              譜面定数 (EXP, MAS)        タイトル */
