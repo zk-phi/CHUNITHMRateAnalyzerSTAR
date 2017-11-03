@@ -692,21 +692,22 @@ var vm;
 
 function attach_view (el) {
     Vue.component("playlog", {
-        props:    ["playlog", "minimum_best", "list"],
+        props:    ["playlog", "minimum_best"],
         template: "#playlog",
         computed: {
             best_required_score: function () {
                 return rate_to_score(this.playlog.difficulty, this.minimum_best);
             },
-            extra_info: function () {
-                if (this.list == "recent") {
-                    return this.playlog.play_date;
+            extra_infos: function () {
+                var res = [];
+                if (this.playlog.play_date) {
+                    res.push(this.playlog.play_date);
                 }
                 if (!isNaN(this.best_required_score)) {
                     var diff = this.best_required_score - this.playlog.score;
-                    if (diff > 0) return "BEST 枠入りまで: " + diff;
+                    if (diff > 0) res.push("BEST 枠入りまで: " + diff);
                 }
-                return null;
+                return res;
             }
         },
         filters: { rate_diff_str: rate_diff_str, score_diff_str: score_diff_str }
@@ -857,7 +858,7 @@ var view = `
           <div v-for="playlog, ix in sorted_list" class="item">
             <p class="subsection" v-if="sections[ix]">{{ sections[ix] }}</p>
             <span class="dim">{{ ix + 1 }}.</span>
-            <playlog :playlog="playlog" :minimum_best="rate.minimum_best" :list="selected_list" />
+            <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
           </div>
         </div>
       </div>
@@ -878,10 +879,8 @@ var playlog_template = `
       Score：{{ playlog.score }}
       <span class="dim">{{ playlog.score | score_diff_str }}</span>
     </div>
-    <div v-if="extra_info">
-      <div class="hr"></div>
-      <div class="dim">{{ extra_info }}</div>
-    </div>
+    <div v-if="extra_infos.length" class="hr"></div>
+    <div v-for="info in extra_infos" class="dim">{{ info }}</div>
   </div>
 </template>
 `;
