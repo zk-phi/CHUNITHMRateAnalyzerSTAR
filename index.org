@@ -1,5 +1,5 @@
 #+TITLE: CHUNITHM Rate Analyzer STAR
-#+STYLE: <link rel='stylesheet' href='https://thomasf.github.io/solarized-css/solarized-dark.min.css'>
+#+STYLE: <link rel='stylesheet' href='https://thomasf.github.io/solarized-css/solarized-light.min.css'>
 
 CHUNITHM のレート上げのお供に！
 
