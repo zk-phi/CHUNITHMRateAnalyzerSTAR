@@ -462,7 +462,8 @@ function parse_int (str) {
 
 /* Format a float to the form "xx.yy". */
 function rate_str (num) {
-    return num.toString().substring(0, num >= 10 ? 5 : 4);
+    if (num > 0) return num.toString().substring(0, num >= 10 ? 5 : 4);
+    return "NO DATA";
 }
 
 /* Format a float to the form " +xx.yy" or " -xx.yy". */
