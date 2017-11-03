@@ -703,7 +703,7 @@ function attach_view (el) {
                 return res;
             }
         },
-        filters: { rate_diff_str: rate_diff_str, score_diff_str: score_diff_str }
+        filters: { rate_str: rate_str, rate_diff_str: rate_diff_str, score_diff_str: score_diff_str }
     });
     vm = new Vue({
         el: el,
