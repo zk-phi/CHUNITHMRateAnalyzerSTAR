@@ -492,6 +492,11 @@ Array.prototype.average = function () {
     return sum / (this.length || 1);
 }
 
+/* Deepcopy an object. */
+Object.deepcopy = function (o) {
+    return JSON.parse(JSON.stringify(o));
+}
+
 /* Polyfill Object.values. */
 Object.values = function (o) {
     return Object.keys(o).map(function (key) { return o[key]; });
@@ -516,11 +521,7 @@ function playlog (name, level, score, play_date /* optional */) {
         score:      score,
         rate:       rate,
         play_date:  play_date,
-        difficulty: difficulty,
-        diff: {
-            score: score - (last_score.score || 0),
-            rate:  rate - (last_score.rate || 0)
-        }
+        difficulty: difficulty
     };
 }
 
@@ -686,11 +687,19 @@ var vm;
 
 function attach_view (el) {
     Vue.component("playlog", {
-        props:    ["playlog", "minimum_best"],
+        props:    ["playlog", "last_best", "minimum_best"],
         template: "#playlog",
         computed: {
             best_required_score: function () {
                 return rate_to_score(this.playlog.difficulty, this.minimum_best);
+            },
+            rate_diff_str: function () {
+                var last_rate = this.last_best ? this.last_best.rate : 0;
+                return rate_diff_str(this.playlog.rate - last_rate);
+            },
+            score_diff_str: function () {
+                var last_score = this.last_best ? this.last_best.score : 0;
+                return score_diff_str(this.playlog.score - last_score);
             },
             extra_infos: function () {
                 var res = [];
@@ -704,12 +713,13 @@ function attach_view (el) {
                 return res;
             }
         },
-        filters: { rate_str: rate_str, rate_diff_str: rate_diff_str, score_diff_str: score_diff_str }
+        filters: { rate_str: rate_str }
     });
     vm = new Vue({
         el: el,
         data: {
             data:           data,
+            last_data:      data,
             selected_list:  "best",
             selected_order: "rate",
             scraper:        null,
@@ -718,7 +728,8 @@ function attach_view (el) {
         },
         created: function () {
             load_data();
-            this.last_rate = this.rate;
+            this.last_rate = Object.deepcopy(this.rate);
+            this.last_data = Object.deepcopy(this.data);
             if (location.href.match(/Playlog\.html/))
                 this.scraper = scrape_playlog_page;
             else if (location.href.match(/MusicGenre\.html/) && $(".box01_title span").length)
@@ -861,7 +872,9 @@ var view = `
           <div v-for="playlog, ix in sorted_list" class="item">
             <p class="subsection" v-if="sections[ix]">{{ sections[ix] }}</p>
             <span class="dim">{{ ix + 1 }}.</span>
-            <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
+            <playlog :playlog="playlog"
+                     :last_best="last_data.best_scores[playlog.name]"
+                     :minimum_best="rate.minimum_best" />
           </div>
         </div>
       </div>
@@ -876,11 +889,11 @@ var playlog_template = `
     <div class="name">{{ playlog.name }}</div>
     <div class="rate">
       Rate： {{ playlog.rate | rate_str }}
-      <span class="dim">{{ playlog.diff.rate | rate_diff_str }}</span>
+      <span class="dim">{{ rate_diff_str }}</span>
     </div>
     <div class="score">
       Score：{{ playlog.score }}
-      <span class="dim">{{ playlog.score | score_diff_str }}</span>
+      <span class="dim">{{ score_diff_str }}</span>
     </div>
     <div v-if="extra_infos.length" class="hr"></div>
     <div v-for="info in extra_infos" class="dim">{{ info }}</div>
