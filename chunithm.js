@@ -492,9 +492,20 @@ Array.prototype.average = function () {
     return sum / (this.length || 1);
 }
 
+/* Flatten an array. */
+Array.prototype.flatten = function () {
+    return [].concat.apply([], this);
+}
+
 /* Deepcopy an object. */
 Object.deepcopy = function (o) {
     return JSON.parse(JSON.stringify(o));
+}
+
+/* Workaround Vue.js's limitation */
+Object.set = function (o, key, val) {
+    if (Vue) Vue.set(o, key, val);
+    else o[key] = val;
 }
 
 /* Polyfill Object.values. */
@@ -505,7 +516,7 @@ Object.values = function (o) {
 /* ---- LOGIC */
 
 var data = {
-    best_scores:       {}, /* Map[Title, Playlog] */
+    best_scores:       {}, /* Map[Title, Level, Playlog] */
     recent_candidates: [], /* OrderedList[Playlog] */
     last_play_date: undefined,
 };
@@ -525,11 +536,15 @@ function playlog (name, level, score, play_date /* optional */) {
 }
 
 function push_playlog_to_best_scores (playlog) {
-    var current_best = data.best_scores[playlog.name];
+    var current_bests = data.best_scores[playlog.name];
+    if (!current_bests) {
+        current_bests = {};
+        Object.set(data.best_scores, playlog.name, current_bests);
+    }
+
+    var current_best = current_bests[playlog.level];
     if (!current_best || comp_rate(playlog, current_best) < 0) {
-        /* workaround vue.js's limitation */
-        if (Vue) Vue.set(data.best_scores, playlog.name, playlog);
-        else data.best_scores[playlog.name] = playlog;
+        Object.set(current_bests, playlog.level, playlog);
     }
 }
 
@@ -569,7 +584,8 @@ function push_playlog_to_recent_candidates (playlog) {
 }
 
 function compute_rate () {
-    var best_list   = Object.values(this.data.best_scores).sort(comp_rate).slice(0, 30);
+    var best_scores = Object.values(this.data.best_scores).map(Object.values).flatten();
+    var best_list   = best_scores.sort(comp_rate).slice(0, 30);
     var recent_list = this.data.recent_candidates.copy().sort(comp_rate).slice(0, 10);
     var best        = best_list.map(function (x) { return x.rate; }).average();
     var recent      = recent_list.map(function (x) { return x.rate; }).average();
@@ -738,12 +754,15 @@ function attach_view (el) {
             rate: function () {
                 return compute_rate();
             },
+            best_scores: function () {
+                return Object.values(this.data.best_scores).map(Object.values).flatten();
+            },
             sorted_list: function () {
                 var comparator = COMPARATOR[this.selected_order];
                 if (this.selected_list == "recent") {
                     return this.data.recent_candidates.copy().sort(comparator);
                 } else {
-                    return Object.values(this.data.best_scores).sort(comparator);
+                    return this.best_scores.copy().sort(comparator);
                 }
             },
             sections: function () {
@@ -872,7 +891,7 @@ var view = `
             <p class="subsection" v-if="sections[ix]">{{ sections[ix] }}</p>
             <span class="dim">{{ ix + 1 }}.</span>
             <playlog :playlog="playlog"
-                     :last_best="last_data.best_scores[playlog.name]"
+                     :last_best="(last_data.best_scores[playlog.name] || {})[playlog.level]"
                      :minimum_best="rate.minimum_best" />
           </div>
         </div>
