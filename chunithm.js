@@ -668,7 +668,7 @@ var COMPARATOR = {
 
 var SECTIONS = {
     rate: [
-        { title: "レート対象",   condition: function (p,i,l) { return i <= (l == "recent" ? 10 : 30); } },
+        { title: "レート対象",   condition: function (p,i,l) { return i < (l == "recent" ? 10 : 30); } },
         { title: "レート対象外", condition: function (p,i,l) { return true; } }
     ],
     difficulty: [
