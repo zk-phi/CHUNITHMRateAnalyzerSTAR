@@ -719,6 +719,7 @@ function attach_view (el) {
             selected_list:  "best",
             selected_order: "rate",
             scraper:        null,
+            show_dialog:    true,
             last_rate:      { best: 0, recent: 0, total: 0, opt: 0 },
         },
         created: function () {
@@ -765,10 +766,10 @@ function attach_view (el) {
             }
         },
         methods: {
-            scrape:        function () { this.scraper(); this.scraper = null; save_data(); },
-            skip_scraping: function () { this.scraper = null; },
-            set_list:      function (list) { this.selected_list = list; },
-            set_order:     function (order) { this.selected_order = order; }
+            scrape:       function () { this.scraper(); save_data(); this.show_dialog = false; },
+            close_dialog: function () { this.show_dialog = false; },
+            set_list:     function (list) { this.selected_list = list; },
+            set_order:    function (order) { this.selected_order = order; }
         },
         filters: { rate_str: rate_str, rate_diff_str: rate_diff_str }
     });
@@ -802,15 +803,23 @@ var view = `
     </div>
   </div>
 
-  <div v-if="scraper" id="dialog">
+  <div v-if="show_dialog" id="dialog">
     <div class="body">
-      <span class="nobreak">CHUNITHM-NET を検出しました。</span>
-      <span class="nobreak">データを取り込みますか？</span>
-      <span class="triangle"></span>
-      <p class="actions">
-        <span class="action clickable secondary" @click="skip_scraping">スキップ</span>
-        <span class="action clickable primary" @click="scrape">取り込む</span>
-      </p>
+      <div v-if="scraper">
+        <span class="nobreak">CHUNITHM-NET を検出しました。</span>
+        <span class="nobreak">データを取り込みますか？</span>
+        <p class="actions">
+          <span class="action clickable secondary" @click="close_dialog">スキップ</span>
+          <span class="action clickable primary" @click="scrape">取り込む</span>
+        </p>
+      </div>
+      <div v-else>
+        <span class="nobreak">CHUNITHM-NET を検出できませんでした。</span>
+        <span class="nobreak">「プレー履歴」または「楽曲別レコード」で難易度を開いて実行してください</span>
+        <p class="actions">
+          <span class="action clickable primary" @click="close_dialog">前回のデータを見る</span>
+        </p>
+      </div>
     </div>
   </div>
 
