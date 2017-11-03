@@ -415,9 +415,9 @@ function score_to_rate(difficulty, score) {
     return Math.floor(rate * 100) / 100;
 }
 
-// Calculate score required to achieve given RATE wrt DIFFICULTY. This
-// function may return NaN to indicate that the rate is NOT achievable
-// wrt DIFFICULTY.
+/* Calculate score required to achieve given RATE wrt DIFFICULTY. This
+ * function may return NaN to indicate that the rate is NOT achievable
+ * wrt DIFFICULTY. */
 function rate_to_score(difficulty, target_rate) {
     var diff = target_rate - difficulty;
     return diff  >  2.0 ? NaN
