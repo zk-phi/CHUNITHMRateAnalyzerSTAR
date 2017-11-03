@@ -708,7 +708,7 @@ function attach_view (el) {
                 }
                 if (!isNaN(this.best_required_score)) {
                     var diff = this.best_required_score - this.playlog.score;
-                    if (diff > 0) res.push("BEST 枠入りまで: " + diff);
+                    if (diff > 0) res.push("BEST ボーダーまで: " + diff);
                 }
                 return res;
             }
