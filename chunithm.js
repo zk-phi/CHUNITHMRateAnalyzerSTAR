@@ -767,7 +767,7 @@ function attach_view (el) {
                        " (Best: " + rate_str(this.rate.best) +
                        " Recent: " + rate_str(this.rate.recent) + ")" +
                        " / 到達可能: " + rate_str(this.rate.opt) +
-                       " #CHUNITHMRateAnalyzerSTAR";
+                       "&hashtags=CHUNITHMRateAnalyzerSTAR";
             }
         },
         methods: {
