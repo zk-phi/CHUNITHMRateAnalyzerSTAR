@@ -461,6 +461,25 @@ function parse_int (str) {
     return parseInt(str.split(",").join(""));
 }
 
+/* Format a float to the form "xx.yy". */
+function rate_str (num) {
+    return num.toString().substring(0, num >= 10 ? 5 : 4);
+}
+
+/* Format a float to the form " +xx.yy" or " -xx.yy". */
+function rate_diff_str (num) {
+    return num <= -10.0 ? " " + num.toString().substring(0, 6)
+        :  num <= -0.01 ? " " + num.toString().substring(0, 5)
+        :  num >=  10.0 ? " +" + num.toString().substring(0, 5)
+        :  num >=  0.01 ? " +" + num.toString().substring(0, 4)
+        :  "";
+}
+
+/* Format an integer to the form "+xxxx" or "-xxxx". */
+function score_diff_str (num) {
+    return num < 0 ? num : "+" + num;
+}
+
 /* Shallow copy an array. */
 Array.prototype.copy = function () {
     return [].concat(this);
@@ -690,18 +709,7 @@ function attach_view (el) {
                 return null;
             }
         },
-        filters: {
-            rate_diff_str: function (num) {
-                return num <= -10.0 ? " " + num.toString().substring(0, 6)
-                    :  num <= -0.01 ? " " + num.toString().substring(0, 5)
-                    :  num >=  10.0 ? " +" + num.toString().substring(0, 5)
-                    :  num >=  0.01 ? " +" + num.toString().substring(0, 4)
-                    :  "";
-            },
-            score_diff_str: function (num) {
-                return num < 0 ? num : "+" + num;
-            }
-        }
+        filters: { rate_diff_str: rate_diff_str, score_diff_str: score_diff_str }
     });
     vm = new Vue({
         el: el,
@@ -752,18 +760,7 @@ function attach_view (el) {
             set_list:      function (list) { this.selected_list = list; },
             set_order:     function (order) { this.selected_order = order; }
         },
-        filters: {
-            rate_str: function (num) {
-                return num.toString().substring(0, num >= 10 ? 5 : 4);
-            },
-            rate_diff_str: function (num) {
-                return num <= -10.0 ? " " + num.toString().substring(0, 6)
-                    :  num <= -0.01 ? " " + num.toString().substring(0, 5)
-                    :  num >=  10.0 ? " +" + num.toString().substring(0, 5)
-                    :  num >=  0.01 ? " +" + num.toString().substring(0, 4)
-                    :  "";
-            }
-        }
+        filters: { rate_str: rate_str, rate_diff_str: rate_diff_str }
     });
 }
 
