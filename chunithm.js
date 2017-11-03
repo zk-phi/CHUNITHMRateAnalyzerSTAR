@@ -752,6 +752,15 @@ function attach_view (el) {
                     }
                 }
                 return sections;
+            },
+            tweet_url: function () {
+                return "https://twitter.com/intent/tweet?text=" +
+                       "CHUNITHM レート解析結果 →" +
+                       " レート: " + rate_str(this.rate.total) +
+                       " (Best: " + rate_str(this.rate.best) +
+                       " Recent: " + rate_str(this.rate.recent) + ")" +
+                       " / 到達可能: " + rate_str(this.rate.opt) +
+                       " #CHUNITHMRateAnalyzerSTAR";
             }
         },
         methods: {
@@ -786,7 +795,8 @@ var view = `
         <div class="item clickable" @click="set_order('play_date')">最近プレーした順</div>
       </div>
       <div class="item footer">
-        Built with ♡ by <a href="http://twitter.com/zk_phi">@zk_phi</a>
+        Built with ♡ by <a target="_blank" href="http://twitter.com/zk_phi">@zk_phi</a>
+        &lt; Follow me on Twitter
       </div>
     </div>
   </div>
@@ -807,6 +817,11 @@ var view = `
     <div id="content">
       <div id="rating" class="section">
         <div class="title">レート</div>
+        <div class="title right">
+            <a target="_blank" class="twitter" :href="tweet_url">
+              <i class="fa fa-twitter" aria-hidden="true"></i>
+            </a>
+        </div>
         <div class="body">
           <div class="card">
             <div id="total_rate">
@@ -876,7 +891,7 @@ var head = `
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<script src="https://platform.twitter.com/widgets.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 `;
 
 /* style.css */
