@@ -805,7 +805,7 @@ var view = `
     <div class="item">CHUNITHM Rate Analyzer ☆ (β)</div>
     <div id="hamburger" class="item right clickable shrinked"></div>
     <div class="menu">
-      <div class="item clickable"><a target="_blank" href="https://zk-phi.github.io/CHUNITHMRateAnalyzerSTAR/">使い方</a></div>
+      <a target="_blank" href="https://zk-phi.github.io/CHUNITHMRateAnalyzerSTAR/"><div class="item clickable">使い方</div></a>
       <div class="item clickable shrinked">リスト</div>
       <div class="submenu">
         <div class="item clickable" @click="set_list('best')">ベストスコア</div>
