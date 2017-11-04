@@ -40,14 +40,12 @@ CHUNITHM のレート上げのお供に！
 
 : javascript:(function()%7Bfunction%20callback()%7B(function(%24)%7Bvar%20jQuery%3D%24%3B%2F*%20https%3A%2F%2Fmrcoles.com%2Fbookmarklet%2F%20*%2F%24(%22%3Cscript%3E%22).attr(%22src%22%2C%20%22https%3A%2F%2Fzk-phi.github.io%2FCHUNITHMRateAnalyzerSTAR%2Fchunithm.js%22).appendTo(%22head%22)%7D)(jQuery.noConflict(true))%7Dvar%20s%3Ddocument.createElement(%22script%22)%3Bs.src%3D%22https%3A%2F%2Fajax.googleapis.com%2Fajax%2Flibs%2Fjquery%2F1.7.1%2Fjquery.min.js%22%3Bif(s.addEventListener)%7Bs.addEventListener(%22load%22%2Ccallback%2Cfalse)%7Delse%20if(s.readyState)%7Bs.onreadystatechange%3Dcallback%7Ddocument.body.appendChild(s)%3B%7D)()
 
-** 使い方
+** 実行
 *** 初めて or 久しぶりに使う場合
 
-すべての譜面のスコアをまとめて取り込みます。Best 枠と到達可能レートが計
-算されますが、 Recent 枠の追跡はまだ行われません。
-
-*Recent 枠の追跡が始まるまでは、 Recent 枠が０扱いになるので、表示レー
-トには誤差が出ます* (Best 枠と、到達可能レートはいつでも正確です)。
+すべての譜面のスコアをまとめて取り込みます。 *Best 枠と到達可能レートが
+計算されますが、 Recent 枠の追跡はまだ行われません* (Recent 枠が 0 扱
+いになるため、表示レートには誤差が出ます)。
 
 1. CHUNITHM NET にログイン
 
@@ -58,14 +56,14 @@ CHUNITHM のレート上げのお供に！
 
 *** 継続して使う場合
 
-「プレイ履歴」画面に表示されているスコアを取り込む方法です。Best 枠が更
-新されて、 Recent 枠の追跡も始まります。
+「プレイ履歴」画面に表示されているスコアを取り込んで、データを更新しま
+す。 *Best 枠が更新されて、 Recent 枠の追跡も始まります* 。
 
-*プレイ履歴を継続して取り込んでいくことで、 Recent 枠の精度が上がってい
-き、正確なレートが計算されるようになります*
+プレイ履歴を継続して取り込んでいくことで、 Recent 枠の精度が上がってい
+き、正確なレートが計算されるようになります。
 
-しばらくレートアナライザーを起動していなくて、プレイ履歴が流れてしまっ
-た場合は１つ目の方法で全譜面のスコアを取り込みなおしてください。
+(しばらくレートアナライザーを起動していなくて、プレイ履歴が流れてしまっ
+た場合は、「楽曲別レコード」で全譜面のスコアを取り込みなおしてください)
 
 1. CHUNITHM NET にログイン
 
