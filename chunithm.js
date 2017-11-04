@@ -741,7 +741,7 @@ function attach_view (el) {
             last_data:      data,
             selected_list:  "best",
             selected_order: "rate",
-            scraper:        null,
+            scrape_target:  null,
             show_dialog:    true,
             last_rate:      { best: 0, recent: 0, total: 0, opt: 0 },
         },
@@ -750,9 +750,9 @@ function attach_view (el) {
             this.last_rate = Object.deepcopy(this.rate);
             this.last_data = Object.deepcopy(this.data);
             if (location.href.match(/Playlog\.html/))
-                this.scraper = scrape_playlog_page;
+                this.scrape_target = "playlog";
             else if (location.href.match(/MusicGenre\.html/) && $(".box01_title span").length)
-                this.scraper = scrape_musicgenre_page;
+                this.scrape_target = "musicgenre";
         },
         computed: {
             list_title: function () {
@@ -800,10 +800,23 @@ function attach_view (el) {
             }
         },
         methods: {
-            scrape:       function () { this.scraper(); save_data(); this.show_dialog = false; },
-            close_dialog: function () { this.show_dialog = false; },
-            set_list:     function (list) { this.selected_list = list; },
-            set_order:    function (order) { this.selected_order = order; }
+            scrape: function () {
+                if (this.scrape_target == "playlog")
+                    scrape_playlog_page();
+                else if (this.scrape_target == "musicgenre")
+                    scrape_musicgenre_page();
+                save_data();
+                this.show_dialog = false;
+            },
+            close_dialog: function () {
+                this.show_dialog = false;
+            },
+            set_list: function (list) {
+                this.selected_list = list;
+            },
+            set_order: function (order) {
+                this.selected_order = order;
+            }
         },
         filters: { rate_str: rate_str, rate_diff_str: rate_diff_str }
     });
@@ -839,9 +852,17 @@ var view = `
 
   <div v-if="show_dialog" id="dialog">
     <div class="body">
-      <div v-if="scraper">
-        <span class="nobreak">CHUNITHM-NET を検出しました。</span>
-        <span class="nobreak">データを取り込みますか？</span>
+      <div v-if="scrape_target">
+        <p v-if="scrape_target == 'playlog'">
+          <span class="nobreak">「プレー履歴」ページを検出しました。</span>
+          <span class="nobreak">データを取り込みますか？</span>
+          <span class="nobreak">(初めて・久々に使う場合は「楽曲別レコード」で全曲のベストスコアを取り込みなおしてください)</span>
+        </p>
+        <p v-else>
+          <span class="nobreak">「楽曲別レコード」ページを検出しました。</span>
+          <span class="nobreak">データを取り込みますか？</span>
+          <span class="nobreak">(Best 枠、到達可能レートが計算されます。 Recent 枠はまだ追跡されません)</span>
+        </p>
         <p class="actions">
           <span class="action clickable secondary" @click="close_dialog">スキップ</span>
           <span class="action clickable primary" @click="scrape">取り込む</span>
@@ -849,7 +870,7 @@ var view = `
       </div>
       <div v-else>
         <span class="nobreak">CHUNITHM-NET を検出できませんでした。</span>
-        <span class="nobreak">「プレー履歴」または「楽曲別レコード」で難易度を開いて実行してください</span>
+        <span>「プレー履歴」を開いて、または「楽曲別レコード」で難易度を選択して実行してください</span>
         <p class="actions">
           <span class="action clickable primary" @click="close_dialog">前回のデータを見る</span>
         </p>
