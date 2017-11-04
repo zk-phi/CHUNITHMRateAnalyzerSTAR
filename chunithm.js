@@ -660,13 +660,13 @@ function save_data () {
 
 var LIST_TITLES = {
     best: "ベストスコア",
-    recent: "Recent 枠",
+    recent: "Recent 枠, 候補枠",
 };
 
 var ORDERS = {
     rate:       { title: "レート順", comparator: comp_rate },
     difficulty: { title: "難易度順", comparator: comp_difficulty },
-    play_date:  { title: "プレー日時順", comparator: comp_play_date },
+    play_date:  { title: "最近プレーした順", comparator: comp_play_date },
     score:      { title: "スコア順", comparator: comp_score }
 };
 
@@ -727,7 +727,7 @@ function attach_view (el) {
                 }
                 if (!isNaN(this.best_required_score)) {
                     var diff = this.best_required_score - this.playlog.score;
-                    if (diff > 0) res.push("BEST ボーダーまで: " + diff);
+                    if (diff > 0) res.push("BEST 枠ボーダーまで: " + diff);
                 }
                 return res;
             }
@@ -841,7 +841,7 @@ var view = `
         <div class="item clickable" @click="set_order('rate')">レート順</div>
         <div class="item clickable" @click="set_order('difficulty')">難易度順</div>
         <div class="item clickable" @click="set_order('score')">スコア順</div>
-        <div class="item clickable" @click="set_order('play_date')">プレー日時順</div>
+        <div class="item clickable" @click="set_order('play_date')">最近プレーした順</div>
       </div>
       <div class="item footer">
         Built with ♡ by <a target="_blank" href="http://twitter.com/zk_phi">@zk_phi</a>
