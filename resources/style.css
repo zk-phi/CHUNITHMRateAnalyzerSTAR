@@ -6,7 +6,7 @@
  * [Content / Header]
  *
  * Colors:
- * - BG: #111 (base), #222 (lightened), #333 (lightened 2)
+ * - BG: #222 (base), #333 (lightened), #444 (lightened 2)
  * - FG: #f4f4f4 (base), #aaa (head darker)
  * - accent: #da9306 (main), #207720 (bas), #ab6b1f (adv), #a7224e (exp), #582080 (mas) [hand-picked]
  *
@@ -64,7 +64,7 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 
 #header {
     position: fixed; top: 0px; left: 0px; z-index: 1;
-    background-color: #111; box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.7);
+    background-color: #222; box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.7);
 }
 
 @media (max-width: 962px) {
@@ -81,18 +81,18 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 
 @media (min-width: 963px) {
     #header { height: 100vh; width: 320px; }
-    #header .menu { background-color: #222; height: 100vh; }
+    #header .menu { background-color: #333; height: 100vh; }
 }
 
 #header .item { height: 35px; width: 100%; padding: 10px; line-height: 15px; }
 #header .item.right { margin-top: -35px; text-align: right; }
 #header .item.footer { font-size: 10px; height: 30px; line-height: 10px; color: #aaa; }
 
-#header .menu .item { background-color: #222; }
-#header .submenu .item { background-color: #333; }
+#header .menu .item { background-color: #333; }
+#header .submenu .item { background-color: #444; }
 
-#header .menu .item.clickable:active { background-color: #111; }
-#header .submenu .item.clickable:active { background-color: #222; }
+#header .menu .item.clickable:active { background-color: #222; }
+#header .submenu .item.clickable:active { background-color: #333; }
 
 /* --- Content */
 
@@ -104,7 +104,7 @@ a:visited { color: #f4f4f4; text-decoration: none; }
     #content { margin-left: 320px; }
 }
 
-#content { padding: 10px; min-height: 100vh; background-color: #111; }
+#content { padding: 10px; min-height: 100vh; background-color: #222; }
 
 /* --- Content / Section */
 
@@ -113,14 +113,14 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 
 #content .section .title {
     height: 35px; line-height: 15px; padding: 10px;
-    border-radius: 3px 3px 0px 0px; background-color: #333;
+    border-radius: 3px 3px 0px 0px; background-color: #444;
 }
 
 #content .section .title.right { margin-top: -35px; text-align: right; }
 #content .section .title .twitter { color: #1da1f2; }
 
 #content .section .body {
-    padding: 10px; border-radius: 0px 0px 3px 3px; background-color: #222;
+    padding: 10px; border-radius: 0px 0px 3px 3px; background-color: #333;
 }
 
 /* --- Content / Card */
