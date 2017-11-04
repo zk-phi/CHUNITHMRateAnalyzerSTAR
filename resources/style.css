@@ -46,8 +46,7 @@
 
 /* --- Common */
 
-/* reset, border-box, transition */
-* { margin: 0px; padding: 0px; box-sizing: border-box; transition: all 0.2s ease-out; }
+* { margin: 0px; padding: 0px; box-sizing: border-box; } /* reset, border-box, transition */
 
 body {
     font-size: 15px; color: #f4f4f4;
