@@ -62,7 +62,10 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 
 /* --- Header */
 
-#header { position: fixed; top: 0px; left: 0px; background-color: #111; z-index: 1; }
+#header {
+    position: fixed; top: 0px; left: 0px; z-index: 1;
+    background-color: #111; box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.7);
+}
 
 @media (max-width: 962px) {
     #header { width: 100%; }
