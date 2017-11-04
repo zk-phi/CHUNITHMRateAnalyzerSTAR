@@ -88,8 +88,8 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 #header .item.right { margin-top: -35px; text-align: right; }
 #header .item.footer { font-size: 10px; height: 30px; line-height: 10px; color: #aaa; }
 
-#header .menu .item { background-color: #222; border: #111 1px solid; }
-#header .submenu .item { background-color: #333; border: #222 1px solid; }
+#header .menu .item { background-color: #222; }
+#header .submenu .item { background-color: #333; }
 
 /* --- Content */
 
