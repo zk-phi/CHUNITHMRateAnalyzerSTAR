@@ -92,6 +92,9 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 #header .menu .item { background-color: #222; }
 #header .submenu .item { background-color: #333; }
 
+#header .menu .item.clickable:active { background-color: #111; }
+#header .submenu .item.clickable:active { background-color: #222; }
+
 /* --- Content */
 
 @media (max-width: 962px) {
