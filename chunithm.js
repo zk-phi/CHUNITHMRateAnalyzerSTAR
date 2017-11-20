@@ -521,18 +521,27 @@ var data = {
     last_play_date: undefined,
 };
 
+function update_playlog_rate (playlog) {
+    var chart      = CHART_BY_NAME[playlog.name];
+    var difficulty = (chart && chart.difficulty[playlog.level]) || 0;
+    var rate       = score_to_rate(difficulty, playlog.score);
+    var last_best  = (data.best_scores[playlog.name] || {})[playlog.level];
+
+    Object.assign(playlog, {
+        rate: rate,
+        difficulty: difficulty,
+        diff: {
+            rate: rate - (last_best ? last_best.rate : 0),
+            score: playlog.score - (last_best ? last_best.score : 0),
+        }
+    });
+
+    return playlog;
+}
+
 function playlog (name, level, score, play_date /* optional */) {
-    var chart      = CHART_BY_NAME[name];
-    var difficulty = (chart && chart.difficulty[level]) || 0;
-    var rate       = score_to_rate(difficulty, score);
-    return {
-        name:       name,
-        level:      level,
-        score:      score,
-        rate:       rate,
-        play_date:  play_date,
-        difficulty: difficulty
-    };
+    var playlog = { name: name, level: level, score: score, play_date: play_date };
+    return update_playlog_rate(playlog);
 }
 
 function push_playlog_to_best_scores (playlog) {
@@ -651,6 +660,9 @@ function scrape_musicgenre_page () {
 function load_data () {
     var data_str = localStorage.getItem("cra_star_data");
     if (data_str) Object.assign(data, JSON.parse(data_str));
+    /* recompute rate and diffs */
+    Object.values(data.best_scores).map(Object.values).flatten().map(update_playlog_rate);
+    data.recent_candidates.map(update_playlog_rate);
 }
 
 function save_data () {
@@ -707,19 +719,11 @@ var vm;
 
 function attach_view (el) {
     Vue.component("playlog", {
-        props:    ["playlog", "last_best", "minimum_best"],
+        props:    ["playlog", "minimum_best"],
         template: "#playlog",
         computed: {
             best_required_score: function () {
                 return rate_to_score(this.playlog.difficulty, this.minimum_best);
-            },
-            rate_diff_str: function () {
-                var last_rate = this.last_best ? this.last_best.rate : 0;
-                return rate_diff_str(this.playlog.rate - last_rate);
-            },
-            score_diff_str: function () {
-                var last_score = this.last_best ? this.last_best.score : 0;
-                return score_diff_str(this.playlog.score - last_score);
             },
             extra_infos: function () {
                 var res = [];
@@ -733,13 +737,12 @@ function attach_view (el) {
                 return res;
             }
         },
-        filters: { rate_str: rate_str }
+        filters: { rate_str: rate_str, rate_diff_str: rate_diff_str, score_diff_str: score_diff_str }
     });
     vm = new Vue({
         el: el,
         data: {
             data:           data,
-            last_data:      data,
             selected_list:  "best",
             selected_order: "rate",
             scrape_target:  null,
@@ -749,7 +752,6 @@ function attach_view (el) {
         created: function () {
             load_data();
             this.last_rate = Object.deepcopy(this.rate);
-            this.last_data = Object.deepcopy(this.data);
             if (location.href.match(/Playlog\.html/))
                 this.scrape_target = "playlog";
             else if (location.href.match(/MusicGenre\.html/) && $(".box01_title span").length)
@@ -920,9 +922,7 @@ var view = `
           <div v-for="playlog, ix in sorted_list" class="item">
             <p class="subsection" v-if="sections[ix]">{{ sections[ix] }}</p>
             <span class="dim">{{ ix + 1 }}.</span>
-            <playlog :playlog="playlog"
-                     :last_best="(last_data.best_scores[playlog.name] || {})[playlog.level]"
-                     :minimum_best="rate.minimum_best" />
+            <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
           </div>
         </div>
       </div>
@@ -937,11 +937,11 @@ var playlog_template = `
     <div class="name">{{ playlog.name }}</div>
     <div class="rate">
       Rate： {{ playlog.rate | rate_str }}
-      <span class="dim">{{ rate_diff_str }}</span>
+      <span class="dim">{{ playlog.diff.rate | rate_diff_str }}</span>
     </div>
     <div class="score">
       Score：{{ playlog.score }}
-      <span class="dim">{{ score_diff_str }}</span>
+      <span class="dim">{{ playlog.diff.score | score_diff_str }}</span>
     </div>
     <div v-if="extra_infos.length" class="hr"></div>
     <div v-for="info in extra_infos" class="dim">{{ info }}</div>
