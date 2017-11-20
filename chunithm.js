@@ -402,6 +402,7 @@ for (var i = 0; i < CHART_LIST.length; i++) CHART_BY_NAME[CHART_LIST[i].name] = 
 /* Calculate rate from given SCORE and DIFFICULTY.
  * reference : http://d.hatena.ne.jp/risette14/20150913/1442160273 */
 function score_to_rate(difficulty, score) {
+    if (!difficulty) return 0;
     var rate = score >= 1007500 ? difficulty + 2.0
              : score >= 1005000 ? difficulty + 1.5 + (score - 1005000) * 10 / 50000
              : score >= 1000000 ? difficulty + 1.0 + (score - 1000000) *  5 / 50000
@@ -523,7 +524,7 @@ var data = {
 function playlog (name, level, score, play_date /* optional */) {
     var chart      = CHART_BY_NAME[name];
     var difficulty = (chart && chart.difficulty[level]) || 0;
-    var rate       = difficulty ? score_to_rate(difficulty, score) : 0;
+    var rate       = score_to_rate(difficulty, score);
     return {
         name:       name,
         level:      level,
