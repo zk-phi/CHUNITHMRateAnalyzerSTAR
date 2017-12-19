@@ -764,7 +764,7 @@ function attach_view (el) {
                 }
                 if (!isNaN(this.best_required_score)) {
                     var diff = this.best_required_score - this.playlog.score;
-                    if (diff > 0) res.push("BEST 枠ボーダーまで: " + diff);
+                    if (diff > 0) res.push("BEST 枠ボーダーまで: " + diff + " (" + this.best_required_score + ")");
                 }
                 return res;
             }
@@ -926,23 +926,26 @@ var view = `
         </div>
         <div class="body">
           <div class="card">
-            <div id="total_rate">
-              {{ rate.total | rate_str }}<span class="dim">{{ rate.total - last_rate.total | rate_diff_str }}</span>
+            <div class="content">
+              <div id="total_rate">
+                {{ rate.total | rate_str }}<span class="dim">{{ rate.total - last_rate.total | rate_diff_str }}</span>
+              </div>
+              <div id="rate_details">
+                Best: {{ rate.best | rate_str }}<span class="dim">{{ rate.best - last_rate.best | rate_diff_str }}</span>
+                /
+                Recent: {{ rate.recent | rate_str }}<span class="dim">{{ rate.recent - last_rate.recent | rate_diff_str }}</span>
+              </div>
             </div>
-            <div id="rate_details">
-              B: {{ rate.best | rate_str }}<span class="dim">{{ rate.best - last_rate.best | rate_diff_str }}</span>
-              /
-              R: {{ rate.recent | rate_str }}<span class="dim">{{ rate.recent - last_rate.recent | rate_diff_str }}</span>
-            </div>
-            <div class="hr"></div>
-            <div id="best_border">
-              BEST 枠ボーダー: {{ rate.minimum_best | rate_str }}
-              <span class="dim">{{ rate.minimum_best - last_rate.minimum_best | rate_diff_str }}</span>
-            </div>
-            <div id="reachable_rate">
-              レート {{ rate.opt | rate_str }}
-              <span class="dim">{{ rate.opt - last_rate.opt | rate_diff_str }}</span>
-              まで到達可能
+            <div class="extra_content">
+              <div id="best_border">
+                BEST 枠ボーダー: {{ rate.minimum_best | rate_str }}
+                <span class="dim">{{ rate.minimum_best - last_rate.minimum_best | rate_diff_str }}</span>
+              </div>
+              <div id="reachable_rate">
+                レート {{ rate.opt | rate_str }}
+                <span class="dim">{{ rate.opt - last_rate.opt | rate_diff_str }}</span>
+                まで到達可能
+              </div>
             </div>
           </div>
         </div>
@@ -953,7 +956,6 @@ var view = `
         <div class="body">
           <div v-for="playlog, ix in sorted_list" class="item">
             <p class="subsection" v-if="sections[ix]">{{ sections[ix] }}</p>
-            <span class="dim">{{ ix + 1 }}.</span>
             <playlog :playlog="playlog" :minimum_best="rate.minimum_best" />
           </div>
         </div>
@@ -966,17 +968,21 @@ var view = `
 var playlog_template = `
 <template id="playlog">
   <div :class="'card ' + playlog.level">
-    <div class="name">{{ playlog.name }}</div>
-    <div class="rate">
-      Rate： {{ playlog.rate | rate_str }}
-      <span class="dim">{{ playlog.diff.rate | rate_diff_str }}</span>
+    <div class="difficulty">{{ playlog.difficulty | rate_str }}</div>
+    <div class="content">
+      <div class="name">{{ playlog.name }}</div>
+      <div class="rate">
+        Rate： {{ playlog.rate | rate_str }}
+        <span class="dim">{{ playlog.diff.rate | rate_diff_str }}</span>
+      </div>
+      <div class="score">
+        Score：{{ playlog.score }}
+        <span class="dim">{{ playlog.diff.score | score_diff_str }}</span>
+      </div>
     </div>
-    <div class="score">
-      Score：{{ playlog.score }}
-      <span class="dim">{{ playlog.diff.score | score_diff_str }}</span>
+    <div v-if="extra_infos.length" class="extra_content">
+      <div v-for="info in extra_infos">{{ info }}</div>
     </div>
-    <div v-if="extra_infos.length" class="hr"></div>
-    <div v-for="info in extra_infos" class="dim">{{ info }}</div>
   </div>
 </template>
 `;
@@ -990,7 +996,7 @@ var head = `
 `;
 
 /* style.css */
-var css = `<style>#dialog:before,#header{left:0;top:0;position:fixed}*{margin:0;padding:0;box-sizing:border-box}body{font-size:15px;color:#f4f4f4;font-family:'Hiragino Kaku Gothic ProN','ヒラギノ角ゴ ProN W3',Meiryo,メイリオ,Osaka,'MS PGothic',arial,helvetica,sans-serif}a,a:hover,a:visited{color:#f4f4f4;text-decoration:none}.clickable{cursor:pointer}.dim{font-size:12px;opacity:.6}#header{z-index:1;background-color:#222;box-shadow:0 3px 15px rgba(0,0,0,.7)}@media (max-width:962px){#header{width:100%}.shrinked+*{display:none}#hamburger.shrinked:before{content:"≡"}#hamburger.expanded:before{content:"×"}#header .menu .item.shrinked:before{content:"▶ ";color:#aaa}#header .menu .item.expanded:before{content:"▼ ";color:#aaa}}@media (min-width:963px){#header{height:100vh;width:320px}#header .menu{background-color:#333;height:100vh}#content{margin-left:320px}}#header .item{height:35px;width:100%;padding:10px;line-height:15px}#header .item.right{margin-top:-35px;text-align:right}#header .item.footer{font-size:10px;height:30px;line-height:10px;color:#aaa}#header .menu .item{background-color:#333}#header .submenu .item{background-color:#444}#header .menu .item.clickable:active{background-color:#222}#header .submenu .item.clickable:active{background-color:#333}@media (max-width:962px){#content_wrapper{margin-top:35px}}#content{padding:10px;min-height:100vh;background-color:#222}#content .section{max-width:384px;margin:auto}#content .section+.section{margin-top:10px}#content .section .title{height:35px;line-height:15px;padding:10px;border-radius:3px 3px 0 0;background-color:#444}#content .section .title.right{margin-top:-35px;text-align:right}#content .section .title .twitter{color:#1da1f2}#content .section .body{padding:10px;border-radius:0 0 3px 3px;background-color:#333}#content .card{padding:10px;border-radius:3px;background-color:#da9306}#content .card.basic{background-color:#207720}#content .card.advanced{background-color:#ab6b1f}#content .card.expert{background-color:#a7224e}#content .card.master{background-color:#582080}#content .card .hr{margin:10px 0;border-bottom:1px solid #f4f4f4;opacity:.2}#rating #total_rate{font-size:60px}#list .item+.item{margin-top:20px}#list .card .name{font-size:25px}#dialog:before{width:100vw;height:100vh;z-index:-1;background-color:#000;opacity:.7;content:" "}#dialog{position:fixed;left:5vw;top:150px;width:90vw;z-index:2}#dialog .body{width:100%;max-width:500px;padding:20px;margin:auto;border-radius:3px;background-color:#eee;color:#222;border:1px solid #aaa}#dialog .body .nobreak{display:inline-block}#dialog .body .actions{margin-top:30px;text-align:right}#dialog .body .actions .action{margin-left:10px}#dialog .body .actions .action.primary{color:#0275d8;font-weight:700}#dialog .body .actions .action.secondary{color:#444}</style>`;
+var css = `<style>*{margin:0;padding:0;box-sizing:border-box}body{font-size:15px;color:#f4f4f4;font-family:'Hiragino Kaku Gothic ProN','ヒラギノ角ゴ ProN W3',Meiryo,メイリオ,Osaka,'MS PGothic',arial,helvetica,sans-serif}a,a:hover,a:visited{color:#f4f4f4;text-decoration:none}.clickable{cursor:pointer}.dim{font-size:10px;opacity:.6}#header{position:fixed;top:0;left:0;z-index:1;background-color:#222;box-shadow:0 3px 15px rgba(0,0,0,.7)}@media (max-width:962px){#header{width:100%}.shrinked+*{display:none}#hamburger.shrinked:before{content:"≡"}#hamburger.expanded:before{content:"×"}#header .menu .item.expanded{border-top:1px solid #444}#header .menu .item.shrinked:before{content:"▶ ";color:#aaa}#header .menu .item.expanded:before{content:"▼ ";color:#aaa}}@media (min-width:963px){#header{height:100vh;width:320px}#header .menu{background-color:#333;height:100vh}#header .menu .item{border-top:1px solid #444}#content{margin-left:320px}}#header .item{height:35px;width:100%;padding:10px;line-height:15px}#header .item.right{margin-top:-35px;text-align:right}#header .item.footer{font-size:10px;height:30px;line-height:10px;color:#aaa}#header .menu .item{background-color:#333}#header .submenu .item{background-color:#444}#header .menu .item.clickable:active{background-color:#222}#header .submenu .item.clickable:active{background-color:#333}@media (max-width:962px){#content_wrapper{margin-top:35px}}#content{padding:10px;min-height:100vh;background-color:#222}#content .section{max-width:384px;margin:auto}#content .section+.section{margin-top:10px}#content .section .title{height:35px;line-height:15px;padding:10px;border-radius:3px 3px 0 0;background-color:#444}#content .section .title.right{margin-top:-35px;text-align:right}#content .section .title .twitter{color:#1da1f2}#content .section .body{padding:10px;border-radius:0 0 3px 3px;background-color:#333}#content .card{position:relative;border-radius:3px;background-color:#da9306}#content .card .content{padding:10px}#content .card .extra_content{padding:5px 10px;background-color:rgba(255,255,255,.1);border-radius:0 0 3px 3px;font-size:12px;opacity:.8}#content .card.basic{background-color:#207720}#content .card.advanced{background-color:#ab6b1f}#content .card.expert{background-color:#a7224e}#content .card.master{background-color:#582080}#rating #total_rate{font-size:60px}#list .subsection{margin:10px 0}#list .item+.item{margin-top:20px}#list .card .difficulty{position:absolute;top:10px;right:10px;font-weight:700}#list .card .content .name{font-weight:700;margin-right:40px}#list .card .content .rate,.score{font-size:12px}#dialog:before{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:-1;background-color:#000;opacity:.7;content:" "}#dialog{position:fixed;left:5vw;top:150px;width:90vw;z-index:2}#dialog .body{width:100%;max-width:500px;padding:20px;margin:auto;border-radius:3px;background-color:#eee;color:#222;border:1px solid #aaa}#dialog .body .nobreak{display:inline-block}#dialog .body .actions{margin-top:30px;text-align:right}#dialog .body .actions .action{margin-left:10px}#dialog .body .actions .action.primary{color:#0275d8;font-weight:700}#dialog .body .actions .action.secondary{color:#444}</style>`;
 
 $.getScript("https://cdn.jsdelivr.net/npm/vue", function () {
     $("head").html(head);

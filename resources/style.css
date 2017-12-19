@@ -12,10 +12,10 @@
  *
  * Sizes:
  * - width:         384px (responsive)
- * - font:          15px (base), 12px (small), 25px (large), 60px (huge), 10px (copyright)
+ * - font:          15px (base), 60px (huge), 12px (small), 10px (smaller)
  * - padding:       10px (base)
  * - margin:        10px (base), 20px (card + card)
- * - opacity:       0.6 (darker), 0.2 (hr)
+ * - opacity:       0.8 (dark), 0.6 (darker)
  * - border radius: 3px (base)
  *
  * Computed:
@@ -58,7 +58,7 @@ a:hover { color: #f4f4f4; text-decoration: none; }
 a:visited { color: #f4f4f4; text-decoration: none; }
 
 .clickable { cursor: pointer; }
-.dim { font-size: 12px; opacity: 0.6; }
+.dim { font-size: 10px; opacity: 0.6; }
 
 /* --- Header */
 
@@ -128,14 +128,20 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 
 /* --- Content / Card */
 
-#content .card { padding: 10px; border-radius: 3px; background-color: #da9306; }
+#content .card { position: relative; border-radius: 3px; background-color: #da9306; }
+#content .card .content { padding: 10px; }
+#content .card .extra_content {
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0px 0px 3px 3px;
+    font-size: 12px;
+    opacity: 0.8;
+}
 
 #content .card.basic    { background-color: #207720; }
 #content .card.advanced { background-color: #ab6b1f; }
 #content .card.expert   { background-color: #a7224e; }
 #content .card.master   { background-color: #582080; }
-
-#content .card .hr { margin: 10px 0px; border-bottom: 1px solid #f4f4f4; opacity: 0.2; }
 
 /* --- Content / Rating */
 
@@ -143,8 +149,11 @@ a:visited { color: #f4f4f4; text-decoration: none; }
 
 /* --- Content / List */
 
+#list .subsection { margin: 10px 0px; }
 #list .item + .item { margin-top: 20px; }
-#list .card .name { font-size: 25px; }
+#list .card .difficulty { position: absolute; top: 10px; right: 10px; font-weight: bold; }
+#list .card .content .name { font-weight: bold; margin-right: 40px; } /* 40px = safetyzone for .difficulty */
+#list .card .content .rate,.score { font-size: 12px; }
 
 /* --- Dialog */
 
