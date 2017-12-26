@@ -927,6 +927,7 @@ var view = `
         <div class="title">レート</div>
         <div class="title right">
             <a target="_blank" class="twitter" :href="tweet_url">
+              ツイートする
               <i class="fa fa-twitter" aria-hidden="true"></i>
             </a>
         </div>
