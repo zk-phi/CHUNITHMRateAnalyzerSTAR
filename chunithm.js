@@ -459,6 +459,7 @@ var CHART_LIST = [
     { id: 567, difficulty: {               master: 12.4 }, name: "はちみつアドベンチャー" },
     { id: 568, difficulty: { expert: 10.9, master: 13.4 }, name: "CHOCOLATE BOMB!!!!" },
     { id: 569, difficulty: {               master: 13.6 }, name: "Twilight" },
+    { id: 570, difficulty: {               master: 13.8 }, name: "ねぇ、壊れタ人形ハ何処へ棄テらレるノ？" },
     { id: 574, difficulty: {               master: 12.0 }, name: "ネ！コ！" },
     { id: 626, difficulty: {               master: 12.6 }, name: "アンノウン・マザーグース" },
     { id: 627, difficulty: { expert:  8.9, master: 12.2 }, name: "ゆけむり魂温泉 II" },
