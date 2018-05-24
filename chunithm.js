@@ -147,6 +147,7 @@ var CHART_LIST = [
     { id: 195, difficulty: {               master: 12.3 }, name: "永遠のメロディ" },
     { id: 196, difficulty: { expert: 11.5, master: 13.7 }, name: "FREEDOM DiVE" },
     { id: 197, difficulty: { expert: 11.7, master: 13.1 }, name: "Jack-the-Ripper◆" },
+    { id: 198, difficulty: {               master: 13.5 }, name: "AVALON" },
     { id: 199, difficulty: { expert: 10.0, master: 12.1 }, name: "ハート・ビート" },
     { id: 200, difficulty: {               master: 12.1 }, name: "無敵We are one!!" },
     { id: 201, difficulty: { expert: 12.1, master: 13.9 }, name: "Contrapasso -inferno-" },
