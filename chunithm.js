@@ -340,6 +340,7 @@ var CHART_LIST = [
     { id: 409, difficulty: { expert: 10.9, master: 13.8 }, name: "Finite" },
     { id: 410, difficulty: { expert: 10.1, master: 12.7 }, name: "MY LIBERATION" },
     { id: 411, difficulty: {               master: 12.3 }, name: "地球最後の告白を" },
+    { id: 413, difficulty: { expert: 10.9, master: 12.9 }, name: "The wheel to the Night ～インド人が夢に!?～" },
     { id: 414, difficulty: { expert: 11.3, master: 13.3 }, name: "We Gonna Party -Feline Groove Mix-" },
     { id: 416, difficulty: {               master: 12.4 }, name: "Through The Tower" },
     { id: 417, difficulty: {               master: 12.4 }, name: "Redo" },
@@ -483,14 +484,19 @@ var CHART_LIST = [
     { id: 593, difficulty: { expert:  8.9, master: 12.2 }, name: "StargazeR" },
     { id: 594, difficulty: { expert:  9.7, master: 12.7 }, name: "ゴーストルール" },
     { id: 595, difficulty: { expert: 10.0, master: 13.0 }, name: "頓珍漢の宴" },
+    { id: 600, difficulty: { expert: 11.9, master: 13.5 }, name: "管弦楽組曲 第3番 ニ長調「第2曲（G線上のアリア）」BWV.1068-2" },
+    { id: 601, difficulty: { expert:  9.9, master: 12.5 }, name: "ここで一席！　Oshama Scramble!" },
     { id: 611, difficulty: { expert:  8.7, master: 12.1 }, name: "SEVENTH HAVEN" },
     { id: 612, difficulty: { expert:  8.4, master: 11.6 }, name: "Bravely You" },
     { id: 613, difficulty: { expert:  8.9, master: 11.7 }, name: "Link with U" },
     { id: 626, difficulty: {               master: 12.6 }, name: "アンノウン・マザーグース" },
     { id: 627, difficulty: { expert:  8.9, master: 12.2 }, name: "ゆけむり魂温泉 II" },
     { id: 628, difficulty: { expert: 10.8, master: 13.3 }, name: "サドマミホリック" },
+    { id: 629, difficulty: { expert: 10.1, master: 12.4 }, name: "Candyland Symphony" },
+    { id: 633, difficulty: {               master: 12.4 }, name: "咲キ誇レ常世ノ華" },
     { id: 636, difficulty: { expert:  9.5, master: 12.1 }, name: "放課後ストライド" },
     { id: 637, difficulty: { expert:  9.5, master: 13.3 }, name: "きゅうりバーにダイブ" },
+    { id: 638, difficulty: { expert:  7.4, master: 10.6 }, name: "むしとりのうた" },
 ];
 
 /* Map[Name, Chart] */
